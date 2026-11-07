@@ -1,0 +1,1689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scott O'Neil · QE Engineer</title>
+<meta name="theme-color" content="#081c0d">
+<link rel="icon" id="favicon" type="image/png" href="assets/favicon.png">
+<!-- Link previews (LinkedIn, Slack, iMessage, Discord, X...). These need full URLs: update them if the site
+     ends up somewhere other than https://spnoneil.github.io/ -->
+<link rel="canonical" href="https://spnoneil.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Scott O'Neil">
+<meta property="og:url" content="https://spnoneil.github.io/">
+<meta property="og:title" content="Scott O'Neil · QE Engineer">
+<meta property="og:description" content="QE engineer in Portland. Manual, automated, and AI-assisted testing across web, mobile, and desktop. Find the 5 hidden bugs.">
+<meta property="og:image" content="https://spnoneil.github.io/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pixel-art astronaut watching a ringed planet rise, with the text Scott O'Neil, QE Engineer, Manual / Automated / AI-assisted.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Scott O'Neil · QE Engineer">
+<meta name="twitter:description" content="QE engineer in Portland. Manual, automated, and AI-assisted testing across web, mobile, and desktop. Find the 5 hidden bugs.">
+<meta name="twitter:image" content="https://spnoneil.github.io/assets/og-image.png">
+<meta name="twitter:image:alt" content="Pixel-art astronaut watching a ringed planet rise, with the text Scott O'Neil, QE Engineer.">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<meta name="description" content="Scott O'Neil, QE Engineer in Portland, OR: manual, automated, and AI-assisted testing across web, mobile, and desktop.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --c0:#081c0d;  /* deepest green, near black */
+    --c1:#1f4a26;
+    --c2:#4f7d2c;
+    --c3:#8fb43a;
+    --c4:#d4e9a0;  /* lightest, used for text */
+    --c0rgb:8,28,13;  /* rgb triplets for translucent fills; swapped along with the palette */
+    --c1rgb:31,74,38;
+    --pixel:'Press Start 2P', monospace;
+    --body:'VT323', monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--c0);color:var(--c4);font-family:var(--body);font-size:23px;line-height:1.3;overflow-x:hidden}
+  ::selection{background:var(--c3);color:var(--c0)}
+  a{color:var(--c4)}
+  :focus-visible{outline:3px dashed var(--c4);outline-offset:4px}
+
+  #scene{position:fixed;top:0;left:0;z-index:0;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:manipulation}
+  #veil{position:fixed;inset:0;background:var(--c0);opacity:0;z-index:1;pointer-events:none}
+  .crt{position:fixed;inset:0;pointer-events:none;z-index:50;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,.09) 0 1px,transparent 1px 3px)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;z-index:2;height:100vh;height:100svh;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-end;text-align:center;
+    padding:clamp(40px,9vh,96px) 16px 26px;pointer-events:none}
+  .hero a{pointer-events:auto}
+  /* name is always pinned; once you scroll past the scene it shrinks into a compact bar */
+  .hero-title{position:fixed;left:0;right:0;top:0;z-index:10;text-align:center;pointer-events:none;
+    padding:clamp(40px,9vh,96px) 16px 0;
+    transition:padding .5s cubic-bezier(.22,.8,.24,1),background-color .4s ease,box-shadow .4s ease}
+  .hero-title h1{transition:font-size .5s cubic-bezier(.22,.8,.24,1),text-shadow .5s ease}
+  .hero-title .role{transition:font-size .5s cubic-bezier(.22,.8,.24,1),margin .5s cubic-bezier(.22,.8,.24,1)}
+  .hero-title{background-color:rgba(var(--c0rgb),0);box-shadow:0 4px 0 0 rgba(var(--c1rgb),0)}
+  .hero-title.compact{padding:12px 16px;background-color:rgba(var(--c0rgb),.94);box-shadow:0 4px 0 0 rgba(var(--c1rgb),1)}
+  .hero-title.compact h1{font-size:clamp(14px,2.4vw,22px);text-shadow:2px 2px 0 var(--c0)}
+  .hero-title.compact .role{margin-top:8px;font-size:9px}
+  .panel{scroll-margin-top:90px}
+  h1{font-family:var(--pixel);font-weight:400;font-size:clamp(22px,5.2vw,58px);margin:0;letter-spacing:.04em;
+    color:var(--c4);text-shadow:4px 4px 0 var(--c0)}
+  .role{font-family:var(--pixel);font-size:clamp(10px,1.6vw,16px);color:var(--c3);margin:20px 0 0;
+    letter-spacing:.14em;text-shadow:2px 2px 0 var(--c0);line-height:1.8}
+  .scroll-hint{font-family:var(--pixel);font-size:11px;letter-spacing:.12em;color:var(--c4);text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;gap:12px;text-shadow:2px 2px 0 var(--c0);
+    padding:8px;transition:opacity .3s steps(3)}
+  .scroll-hint.gone{opacity:0}
+  .scroll-hint .blink{animation:blink 1.1s steps(1) infinite}
+  .scroll-hint svg{width:28px;height:16px;filter:drop-shadow(2px 2px 0 var(--c0));animation:bob 1s steps(2) infinite}
+  @keyframes blink{60%{opacity:0}}
+  @keyframes bob{50%{transform:translateY(6px)}}
+
+  /* ---------- content ---------- */
+  main{position:relative;z-index:2;max-width:840px;margin:0 auto;padding:10vh 16px 40px;display:grid;gap:64px;pointer-events:none}
+  .panel{position:relative;background:rgba(var(--c0rgb),.9);padding:28px;margin:4px;pointer-events:auto;
+    box-shadow:0 -4px 0 0 var(--c3),0 4px 0 0 var(--c3),-4px 0 0 0 var(--c3),4px 0 0 0 var(--c3),
+               10px 12px 0 2px rgba(0,0,0,.35)}
+  .panel-head{cursor:pointer;user-select:none}
+  .label{font-family:var(--pixel);font-size:11px;letter-spacing:.14em;color:var(--c3);margin:0 0 14px}
+  .label::before{content:'> '}
+  h2{font-family:var(--pixel);font-weight:400;font-size:clamp(15px,2.4vw,20px);line-height:1.5;margin:0;color:var(--c4)}
+  .toggle{all:unset;box-sizing:border-box;display:flex;width:100%;justify-content:space-between;align-items:center;gap:16px;cursor:pointer}
+  .toggle:focus-visible{outline:3px dashed var(--c4);outline-offset:6px}
+  .caret{width:21px;height:12px;flex:none;color:var(--c3);transition:transform .3s steps(3)}
+  .panel-head:hover .caret{color:var(--c4)}
+  .panel.closed .caret{transform:rotate(-90deg)}
+  .collapse{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .45s steps(9),opacity .45s steps(9)}
+  .panel.closed .collapse{grid-template-rows:0fr;opacity:0}
+  .collapse-inner{overflow:hidden;min-height:0}
+  .body{padding-top:22px}
+  h3{font-family:var(--pixel);font-weight:400;font-size:10px;letter-spacing:.12em;color:var(--c3);margin:0 0 10px}
+  p{margin:0 0 14px}
+  p:last-child{margin-bottom:0}
+
+  /* portrait floats left and the bio wraps around and under it, newspaper-style */
+  .about{display:flow-root}
+  .avatar-wrap{float:left;margin:4px 28px 12px 4px}
+  .avatar{position:relative;width:210px;aspect-ratio:1;display:block;background:var(--c1);
+    box-shadow:0 -4px 0 0 var(--c2),0 4px 0 0 var(--c2),-4px 0 0 0 var(--c2),4px 0 0 0 var(--c2)}
+  .avatar canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+  /* photo sits behind the helmet, showing through the transparent visor (canvas px 7..23 x 7..21 of 30) */
+  .avatar .face,.avatar .tint{position:absolute;left:23.333%;top:23.333%;width:56.667%;height:50%}
+  .avatar .face{object-fit:cover;object-position:50% 30%;filter:grayscale(1) contrast(1.1) brightness(1.05);transition:filter .4s ease}
+  .avatar .tint{background:var(--c3);mix-blend-mode:multiply;opacity:.9;transition:opacity .4s ease}
+  .avatar:not(.has-photo) .tint{display:none}
+  .avatar.has-photo:hover .face{filter:none}
+  .avatar.has-photo:hover .tint{opacity:0}
+  .avatar-cap{font-family:var(--pixel);font-size:9px;color:var(--c3);text-align:center;margin-top:14px;letter-spacing:.1em}
+  .stats{clear:both;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:22px 0 0;padding-top:18px;border-top:2px dashed var(--c2)}
+  .stats dt{font-family:var(--pixel);font-size:10px;color:var(--c3);padding-top:6px}
+  .stats dd{margin:0}
+
+  .inv{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px 28px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:0;padding:2px}
+  .chips li{background:var(--c1);padding:2px 10px;line-height:1.2;
+    box-shadow:0 -2px 0 0 var(--c2),0 2px 0 0 var(--c2),-2px 0 0 0 var(--c2),2px 0 0 0 var(--c2)}
+  .quest + .quest{margin-top:30px;padding-top:28px;border-top:2px dashed var(--c2)}
+  .quest-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline;margin-bottom:6px}
+  .quest-title{font-family:var(--body);font-size:28px;letter-spacing:0;color:var(--c4);margin:0}
+  .badge{font-family:var(--pixel);font-size:9px;letter-spacing:.1em;padding:6px 8px;background:var(--c3);color:var(--c0)}
+  .badge.done{background:var(--c1);color:var(--c3)}
+  .meta{color:var(--c3);margin:0 0 12px}
+  .quest ul{list-style:none;margin:0;padding:0}
+  .quest li{padding-left:26px;position:relative;margin-bottom:6px}
+  .quest li::before{content:'+';position:absolute;left:4px;color:var(--c3)}
+  .quest ul.roles{margin:2px 0 6px}
+  .quest ul.roles li{padding-left:0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 16px;margin-bottom:2px}
+  .quest ul.roles li::before{content:none}
+  .role-name{color:var(--c4)}
+  .roles .meta{margin:0}
+  .sub{font-family:var(--pixel);font-weight:400;font-size:9px;letter-spacing:.12em;color:var(--c3);margin:20px 0 10px}
+
+  /* past the cutoff the scene keeps animating but softens and stops taking clicks */
+  #scene{transition:filter .6s ease}
+  body.deep #scene{filter:blur(1.5px);pointer-events:none}
+
+  .contact-links{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px;padding:4px}
+  .btn{font-family:var(--pixel);font-size:11px;letter-spacing:.06em;text-decoration:none;padding:14px 16px;margin:4px;
+    background:var(--c3);color:var(--c0);
+    box-shadow:0 -4px 0 0 var(--c3),0 4px 0 0 var(--c3),-4px 0 0 0 var(--c3),4px 0 0 0 var(--c3),6px 8px 0 2px var(--c0)}
+  .btn:hover{background:var(--c4);box-shadow:0 -4px 0 0 var(--c4),0 4px 0 0 var(--c4),-4px 0 0 0 var(--c4),4px 0 0 0 var(--c4),6px 8px 0 2px var(--c0)}
+  .btn.alt{background:var(--c1);color:var(--c4);box-shadow:0 -4px 0 0 var(--c2),0 4px 0 0 var(--c2),-4px 0 0 0 var(--c2),4px 0 0 0 var(--c2),6px 8px 0 2px var(--c0)}
+  .btn.alt:hover{background:var(--c2)}
+
+  footer{position:relative;z-index:2;text-align:center;padding:30px 16px 60px;font-family:var(--pixel);font-size:10px;color:var(--c3);line-height:2.4;letter-spacing:.1em;pointer-events:none}
+  footer a{color:var(--c4);text-decoration:none;pointer-events:auto}
+  footer a:hover{color:var(--c3)}
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .6s steps(6),transform .6s steps(6)}
+  .reveal.in{opacity:1;transform:none}
+
+  button.btn{border:0;cursor:pointer}
+
+  /* ---------- hidden bugs (Bug Hunt) ---------- */
+  .hbug{all:unset;display:inline-block;width:16px;height:14px;margin:0 0 0 10px;color:var(--c2);cursor:pointer;vertical-align:-1px;
+    pointer-events:auto;animation:skitter 7s steps(1) infinite}
+  .hbug svg{display:block;width:100%;height:100%;fill:currentColor}
+  .hbug:hover{color:var(--c4)}
+  .hbug:focus-visible{outline:2px dashed var(--c4);outline-offset:3px}
+  .hbug.found{animation:squash .45s steps(4) forwards;pointer-events:none}
+  @keyframes skitter{0%,91%{transform:none}93%{transform:translateX(2px)}95%{transform:translateX(-1px)}97%{transform:translateX(2px)}}
+  @keyframes squash{50%{transform:scale(1.5,.5)}100%{transform:scale(1.9,.15);opacity:0}}
+
+  /* ---------- dock: bug hunt, achievements, diagnostics, palette, sound ---------- */
+  .dock{position:fixed;right:12px;bottom:16px;z-index:40;display:flex;flex-direction:column;gap:10px}
+  .dock-btn{all:unset;box-sizing:border-box;width:48px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;padding:7px 0;cursor:pointer;color:var(--c3);background:rgba(var(--c0rgb),.92);
+    box-shadow:0 -2px 0 0 var(--c2),0 2px 0 0 var(--c2),-2px 0 0 0 var(--c2),2px 0 0 0 var(--c2)}
+  .dock-btn svg{width:20px;height:20px;fill:currentColor}
+  .dock-btn span{font-family:var(--pixel);font-size:7px;color:var(--c4)}
+  .dock-btn:hover,.dock-btn[aria-pressed="true"],.dock-btn[aria-expanded="true"]{color:var(--c4);background:rgba(var(--c1rgb),.96)}
+  .dock-btn:focus-visible{outline:3px dashed var(--c4);outline-offset:3px}
+  .dock-btn.done{color:var(--c0);background:var(--c3)}
+  .dock-btn.done span{color:var(--c0)}
+  .dock-btn.ping{animation:ping .5s steps(3)}
+  @keyframes ping{50%{transform:scale(1.25)}}
+
+  .trophies{position:fixed;right:76px;bottom:16px;z-index:41;width:min(360px,calc(100vw - 96px));max-height:min(72vh,560px);overflow:auto;
+    padding:16px 18px;background:rgba(var(--c0rgb),.97);
+    box-shadow:0 -4px 0 0 var(--c3),0 4px 0 0 var(--c3),-4px 0 0 0 var(--c3),4px 0 0 0 var(--c3)}
+  .trophies h3{margin:0 0 6px}
+  .trophies .note{font-size:18px;color:var(--c2);margin:0 0 12px}
+  .trophies ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .trophies li{display:grid;grid-template-columns:34px 1fr;gap:6px;line-height:1.15;font-size:19px;color:var(--c2)}
+  .trophies li .box{font-family:var(--pixel);font-size:10px;padding-top:3px}
+  .trophies li b{font-family:var(--pixel);font-weight:400;font-size:9px;letter-spacing:.06em;color:var(--c3);display:block;margin-bottom:3px}
+  .trophies li.got{color:var(--c3)}
+  .trophies li.got b,.trophies li.got .box{color:var(--c4)}
+  .trophies .reset{all:unset;cursor:pointer;font-family:var(--pixel);font-size:8px;color:var(--c3);margin-top:16px;display:inline-block}
+  .trophies .reset:hover{color:var(--c4)}
+
+  .toasts{position:fixed;left:12px;bottom:16px;z-index:45;display:grid;gap:10px;pointer-events:none;width:min(320px,calc(100vw - 96px))}
+  .toast{padding:12px 14px;background:rgba(var(--c0rgb),.97);animation:toast-in .35s steps(4);
+    box-shadow:0 -3px 0 0 var(--c4),0 3px 0 0 var(--c4),-3px 0 0 0 var(--c4),3px 0 0 0 var(--c4)}
+  .toast small{display:block;font-family:var(--pixel);font-size:7px;letter-spacing:.14em;color:var(--c3);margin-bottom:7px}
+  .toast b{display:block;font-family:var(--pixel);font-weight:400;font-size:11px;color:var(--c4);margin-bottom:5px}
+  .toast span{display:block;font-size:19px;line-height:1.1;color:var(--c3)}
+  .toast.out{animation:toast-out .3s steps(3) forwards}
+  @keyframes toast-in{from{transform:translateY(16px);opacity:0}}
+  @keyframes toast-out{to{transform:translateY(16px);opacity:0}}
+
+  /* ---------- diagnostics terminal ---------- */
+  dialog.diag{border:0;padding:0;width:min(680px,calc(100vw - 32px));max-height:min(82vh,660px);background:var(--c0);color:var(--c4);
+    box-shadow:0 -4px 0 0 var(--c3),0 4px 0 0 var(--c3),-4px 0 0 0 var(--c3),4px 0 0 0 var(--c3)}
+  dialog.diag::backdrop{background:rgba(0,0,0,.55)}
+  .diag-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:var(--c1);
+    font-family:var(--pixel);font-size:10px;letter-spacing:.12em;color:var(--c4)}
+  .diag-head div{display:flex;gap:6px}
+  .diag-head button{all:unset;cursor:pointer;font-family:var(--pixel);font-size:9px;color:var(--c3);padding:6px 8px}
+  .diag-head button:hover,.diag-head button:focus-visible{color:var(--c4);outline:2px dashed var(--c4)}
+  .diag-out{margin:0;padding:16px 18px 20px;font-size:20px;line-height:1.35;overflow:auto;max-height:calc(min(82vh,660px) - 52px)}
+  .diag-out .st{font-family:var(--pixel);font-size:9px;letter-spacing:.06em;padding:2px 5px;margin-right:6px;vertical-align:2px}
+  .diag-out .st.pass{background:var(--c3);color:var(--c0)}
+  .diag-out .st.warn{background:var(--c1);color:var(--c4);box-shadow:0 0 0 2px var(--c4)}
+  .diag-out .st.fail{background:var(--c4);color:var(--c0)}
+  .diag-out .dim{color:var(--c2)}
+  .diag-out .sum{color:var(--c4)}
+  .diag-out .ok{color:var(--c3)}
+
+  /* ---------- Jira-style bug report (Contact) ---------- */
+  .jira-open{margin-top:26px}
+  .jira-crumb{font-size:19px;color:var(--c2);margin:0}
+  .jira-crumb b{font-weight:400;color:var(--c3)}
+  .jira-title{font-family:var(--pixel);font-size:12px;letter-spacing:.06em;color:var(--c4);margin:6px 0 18px}
+  .jira-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+  .jira-grid .full{grid-column:1/-1}
+  .jira label,.jira .field{display:grid;gap:6px;font-family:var(--pixel);font-size:8px;letter-spacing:.1em;color:var(--c3)}
+  .jira input,.jira select,.jira textarea{box-sizing:border-box;width:100%;font-family:var(--body);font-size:20px;letter-spacing:0;color:var(--c4);
+    background:var(--c1);border:2px solid var(--c2);border-radius:0;padding:6px 10px}
+  .jira textarea{resize:vertical;line-height:1.25}
+  .jira input:focus,.jira select:focus,.jira textarea:focus{outline:none;border-color:var(--c4)}
+  .jira input::placeholder,.jira textarea::placeholder{color:var(--c2)}
+  .jira .req{color:var(--c4)}
+  .j-assignee{display:flex;align-items:center;gap:10px;min-height:42px;font-family:var(--body);font-size:20px;letter-spacing:0;color:var(--c4)}
+  .j-av{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--c3);color:var(--c0);font-family:var(--pixel);font-size:8px}
+  .j-labels{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-height:42px}
+  .j-labels span{font-family:var(--body);font-size:18px;letter-spacing:0;color:var(--c4);background:var(--c1);padding:0 8px;
+    box-shadow:0 -2px 0 0 var(--c2),0 2px 0 0 var(--c2),-2px 0 0 0 var(--c2),2px 0 0 0 var(--c2)}
+  .jira-note{font-size:18px;color:var(--c3);margin:16px 0 0}
+  .jira-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:18px;margin-top:16px}
+  .jira-sent{color:var(--c3);margin:18px 0 0}
+
+  /* mid-size screens: keep content clear of the dock column */
+  @media (min-width:641px) and (max-width:1020px){
+    main,footer{padding-right:84px}
+  }
+  /* phones: the dock becomes a bottom bar, and everything else makes room for it */
+  @media (max-width:640px){
+    .jira-grid{grid-template-columns:1fr}
+    .dock{left:0;right:0;bottom:0;flex-direction:row;justify-content:center;gap:10px;padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+      background:rgba(var(--c0rgb),.96);box-shadow:0 -3px 0 0 var(--c1)}
+    .dock-btn{width:52px;min-height:42px}
+    body{padding-bottom:64px}
+    .hero{padding-bottom:84px}
+    .toasts{left:12px;right:12px;bottom:76px;width:auto}
+    .trophies{right:12px;left:12px;bottom:76px;width:auto}
+  }
+
+  @media (max-width:640px){
+    body{font-size:21px}
+    .panel{padding:20px 18px}
+    .avatar-wrap{margin:2px 16px 8px 2px}
+    .avatar{width:120px}
+    .avatar-cap{margin-top:10px}
+    .quest-title{font-size:25px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .collapse,.caret{transition:none}
+    .scroll-hint .blink,.scroll-hint svg{animation:none}
+    .hero-title,.hero-title h1,.hero-title .role,#scene,.avatar .face,.avatar .tint{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" role="img" aria-label="Pixel-art scene: a small astronaut on a cliff watches a ringed planet rise over an alien horizon under a starry sky."></canvas>
+<div id="veil" aria-hidden="true"></div>
+<div class="crt" aria-hidden="true"></div>
+
+<header class="hero-title" id="masthead">
+  <h1>SCOTT O’NEIL</h1>
+  <p class="role">QE ENGINEER</p>
+</header>
+
+<div class="hero" id="top">
+  <a class="scroll-hint" href="#about">
+    <span class="blink">SCROLL TO EXPLORE</span>
+    <svg viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg>
+  </a>
+</div>
+
+<main>
+  <section id="about" class="panel reveal">
+    <div class="panel-head">
+      <p class="label">PLAYER 1</p>
+      <h2><button class="toggle" aria-expanded="true" aria-controls="about-body">Hello, explorer.<svg class="caret" viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg></button></h2>
+    </div>
+    <div class="collapse" id="about-body"><div class="collapse-inner"><div class="body">
+      <div class="about">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatar-box">
+            <img class="face" id="face" src="assets/face.jpg" alt="Photo of Scott O'Neil" hidden>
+            <span class="tint" aria-hidden="true"></span>
+            <canvas id="avatar" width="30" height="30" aria-hidden="true"></canvas>
+          </div>
+          <p class="avatar-cap">LVL 4 QE</p>
+        </div>
+        <div>
+          <p>Every world has bugs. My job is finding them before the players do. I'm a QE engineer in Portland, currently a QA Analyst at PlusQA, a software testing company with a massive device library, where I've spent 4+ years testing web, iOS, Android, Windows, and macOS releases.</p>
+          <p>I work both sides of quality. Hands-on: coordinating releases, exploratory and new-feature testing, regression passes, and bug triage. In code: Python and TypeScript suites in Selenium, Cypress, and Robot Framework, wired into CI/CD. Knowing when a person's judgment beats a script, and when it doesn't, is most of the job.</p>
+          <p>I came to software after a decade of customer-facing work, and it still shapes how I test: I think about the person on the other side of the screen, then document exactly how things break so developers can fix them fast. I lean on AI where it helps: Claude for test case generation, testing support, and script drafting, and Gemini for Google docs and summaries, with a human check on every result.</p>
+          <dl class="stats">
+            <dt>CLASS</dt><dd>QE Engineer</dd>
+            <dt>RANK</dt><dd>QA Analyst, PlusQA</dd>
+            <dt>BASE</dt><dd>Portland, OR</dd>
+            <dt>XP</dt><dd>4+ yrs in QA · 10+ yrs customer-facing</dd>
+            <dt>MODES</dt><dd>Manual · Automated · AI-assisted</dd>
+            <dt>SPECIAL</dt><dd>Cross-platform release validation</dd>
+            <dt>HI-SCORE</dt><dd>4 releases/month · ~40 bugs filed/month · 200+ flaky tests fixed · pass rate 65% → 98%</dd>
+          </dl>
+        </div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <section class="panel reveal closed">
+    <div class="panel-head">
+      <p class="label">INVENTORY</p>
+      <h2><button class="toggle" aria-expanded="false" aria-controls="inv-body">Skills &amp; tools<svg class="caret" viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg></button></h2>
+    </div>
+    <div class="collapse" id="inv-body" inert><div class="collapse-inner"><div class="body">
+      <div class="inv">
+        <div><h3>MANUAL TESTING</h3><ul class="chips"><li>Exploratory</li><li>New feature testing</li><li>Release coordination</li><li>Bug triage &amp; reporting</li><li>Test planning</li><li>Test case writing</li><li>E2E</li><li>Regression</li><li>Smoke</li><li>UI</li><li>API</li></ul></div>
+        <div><h3>PLATFORMS</h3><ul class="chips"><li>Windows</li><li>macOS</li><li>Android</li><li>iOS</li><li>Web</li></ul></div>
+        <div><h3>AUTOMATION</h3><ul class="chips"><li>Cypress</li><li>Selenium</li><li>Robot Framework</li><li>Playwright</li><li>Appium</li></ul></div>
+        <div><h3>LANGUAGES</h3><ul class="chips"><li>Python</li><li>TypeScript</li><li>JavaScript</li><li>C#</li></ul></div>
+        <div><h3>AI-ASSISTED QA</h3><ul class="chips"><li>Claude: test case generation</li><li>Claude: testing support</li><li>Claude: script drafting</li><li>Gemini: Google docs &amp; summaries</li><li>Prompt engineering</li></ul></div>
+        <div><h3>CI &amp; VERSION CONTROL</h3><ul class="chips"><li>Git</li><li>GitHub Actions</li><li>CI/CD pipelines</li></ul></div>
+        <div><h3>FRAMEWORKS</h3><ul class="chips"><li>React</li><li>React Native</li><li>.NET MVC</li></ul></div>
+        <div><h3>TOOLS &amp; PROCESS<button class="hbug" data-bug="inv" aria-label="Hidden bug: squash it"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1H2zM5 0h1v1H5zM3 1h2v1H3zM0 2h8v1H0zM2 3h4v1H2zM0 4h8v1H0zM1 5h1v1H1zM3 5h2v1H3zM6 5h1v1H6zM0 6h1v1H0zM7 6h1v1H7z"/></svg></button></h3><ul class="chips"><li>Jira</li><li>TestRail</li><li>Asana</li><li>Postman</li><li>REST APIs</li><li>Agile / Scrum</li></ul></div>
+      </div>
+    </div></div></div>
+  </section>
+
+  <section class="panel reveal closed">
+    <div class="panel-head">
+      <p class="label">QUEST LOG</p>
+      <h2><button class="toggle" aria-expanded="false" aria-controls="quest-body">Experience<svg class="caret" viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg></button></h2>
+    </div>
+    <div class="collapse" id="quest-body" inert><div class="collapse-inner"><div class="body">
+      <article class="quest">
+        <div class="quest-head"><h3 class="quest-title">PlusQA</h3><span class="badge">ACTIVE</span></div>
+        <p class="meta about-co">Software testing company: manual and automated QA, backed by a massive device library.</p>
+        <ul class="roles">
+          <li><span class="role-name">QA Analyst</span><span class="meta">Feb 2026 – Present</span></li>
+          <li><span class="role-name">Automation Engineer</span><span class="meta">Aug 2021 – Nov 2024</span></li>
+        </ul>
+        <h4 class="sub">HANDS-ON TESTING · CURRENT CLIENT: ROBINHOOD</h4>
+        <ul>
+          <li>Coordinate 4 releases a month on a weekly beta cadence, running regression testing to confirm each build is ready to ship.</li>
+          <li>Test new features end to end, pairing scripted cases with exploratory sessions to surface edge cases early.</li>
+          <li>File ~40 bug tickets a month and triage incoming issues, reproducing, prioritizing, and routing them to the right developers.</li>
+          <li>Write and maintain test plans and 100+ hand-written test cases for new and existing features, aligned with product and sprint goals.</li>
+          <li>Cover 10+ devices across Windows, macOS, iOS, and Android in E2E and smoke passes to validate releases.</li>
+        </ul>
+        <h4 class="sub">AUTOMATION · CLIENT: AIRBNB</h4>
+        <ul>
+          <li>Built scalable automated tests in Python and TypeScript with Selenium, Cypress, and Robot Framework, prioritizing high-risk, error-prone areas.</li>
+          <li>Integrated suites into CI/CD pipelines to catch regressions before deployment.</li>
+          <li>Removed or refactored 200+ flaky tests, raising the suite pass rate from 65% to 98%.</li>
+          <li>Improved the shared framework: screenshot compression, better logging, and selector refactors.</li>
+        </ul>
+        <h4 class="sub">TEAM</h4>
+        <ul>
+          <li>Work with engineers, PMs, and designers to build full feature understanding and catch bugs early.</li>
+        </ul>
+      </article>
+      <article class="quest">
+        <div class="quest-head"><h3 class="quest-title">Software Engineering Intern · SharedSaga</h3><span class="badge done">COMPLETE</span></div>
+        <p class="meta">Jun 2021 – Jul 2021</p>
+        <ul>
+          <li>Led an address book feature through the full SDLC in a React app.</li>
+          <li>Built a no-auth endpoint for user-generated social pages, with S3-backed storage and error handling.</li>
+          <li>Refactored legacy React components into modular, testable code.<button class="hbug" data-bug="quest" aria-label="Hidden bug: squash it"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1H2zM5 0h1v1H5zM3 1h2v1H3zM0 2h8v1H0zM2 3h4v1H2zM0 4h8v1H0zM1 5h1v1H1zM3 5h2v1H3zM6 5h1v1H6zM0 6h1v1H0zM7 6h1v1H7z"/></svg></button></li>
+        </ul>
+      </article>
+    </div></div></div>
+  </section>
+
+  <section class="panel reveal closed">
+    <div class="panel-head">
+      <p class="label">TRAINING</p>
+      <h2><button class="toggle" aria-expanded="false" aria-controls="train-body">Education<svg class="caret" viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg></button></h2>
+    </div>
+    <div class="collapse" id="train-body" inert><div class="collapse-inner"><div class="body">
+      <article class="quest">
+        <div class="quest-head"><h3 class="quest-title">Full-Stack Development · Epicodus</h3><span class="badge done">2020 – 2021</span></div>
+        <p class="meta">HTML5 · CSS3 · JavaScript · C# / .NET MVC · React</p>
+        <p>Pair programming, unit testing, and building against APIs.<button class="hbug" data-bug="train" aria-label="Hidden bug: squash it"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1H2zM5 0h1v1H5zM3 1h2v1H3zM0 2h8v1H0zM2 3h4v1H2zM0 4h8v1H0zM1 5h1v1H1zM3 5h2v1H3zM6 5h1v1H6zM0 6h1v1H0zM7 6h1v1H7z"/></svg></button></p>
+      </article>
+    </div></div></div>
+  </section>
+
+  <section id="contact" class="panel reveal">
+    <div class="panel-head">
+      <p class="label">CONTACT</p>
+      <h2><button class="toggle" aria-expanded="true" aria-controls="contact-body">Send a transmission<svg class="caret" viewBox="0 0 7 4" shape-rendering="crispEdges" aria-hidden="true"><path fill="currentColor" d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z"/></svg></button></h2>
+    </div>
+    <div class="collapse" id="contact-body"><div class="collapse-inner"><div class="body">
+      <div id="contact-plain">
+        <p>Always happy to talk testing. Whether it's manual QA, QE, test automation, or just swapping notes on quality, send a transmission. Email is the fastest channel.</p>
+        <div class="contact-links">
+          <a class="btn" href="mailto:jobs4scotto@gmail.com">EMAIL</a>
+          <a class="btn alt" href="https://www.linkedin.com/in/scottoneilpdx" target="_blank" rel="noopener">LINKEDIN</a>
+          <a class="btn alt" href="https://github.com/spnoneil" target="_blank" rel="noopener">GITHUB</a>
+          <a class="btn alt" href="assets/Scott-ONeil-Resume-web.pdf" download="Scott-ONeil-Resume.pdf">RESUME</a>
+        </div>
+        <button type="button" class="btn alt jira-open" id="jira-open" aria-expanded="false" aria-controls="jira">FILE A BUG REPORT</button>
+        <p class="jira-sent" id="jira-sent" role="status" hidden></p>
+      </div>
+
+      <form class="jira" id="jira" hidden aria-labelledby="jira-title">
+        <p class="jira-crumb">Projects / <b>Hire Scott</b> / <b id="j-key">HIRE-1</b></p>
+        <h3 class="jira-title" id="jira-title">Create issue</h3>
+        <div class="jira-grid">
+          <label>PROJECT<select disabled><option>Hire Scott (HIRE)</option></select></label>
+          <label>ISSUE TYPE<select id="j-type"><option>Bug</option><option>Story</option><option>Task</option><option>Opportunity</option></select></label>
+          <label class="full"><span>SUMMARY <span class="req">*</span></span><input id="j-summary" required maxlength="120" placeholder="e.g. Our team is missing a QE engineer"></label>
+          <label class="full">DESCRIPTION<textarea id="j-desc" rows="9">Steps to reproduce:
+1. Open a QA / QE role on your team
+2. Review candidates
+3. Notice Scott isn't on the team yet
+
+Expected result:
+Scott is on the team.
+
+Actual result:
+Scott is not on the team (yet).</textarea></label>
+          <label>PRIORITY<select id="j-pri"><option>Highest</option><option selected>High</option><option>Medium</option><option>Low</option><option>Lowest</option></select></label>
+          <label>REPORTER<input id="j-reporter" maxlength="80" placeholder="Your name"></label>
+          <div class="field">ASSIGNEE<div class="j-assignee"><span class="j-av" aria-hidden="true">SO</span>Scott O'Neil</div></div>
+          <div class="field">LABELS<div class="j-labels"><span>qe</span><span>hiring</span><span>portland</span></div></div>
+        </div>
+        <p class="jira-note">"Create" opens a pre-filled email in your mail app, addressed to Scott.</p>
+        <div class="jira-actions">
+          <button type="button" class="btn alt" id="jira-cancel">CANCEL</button>
+          <button type="submit" class="btn">CREATE</button>
+        </div>
+      </form>
+    </div></div></div>
+  </section>
+</main>
+
+<footer>
+  <a href="#top" id="to-orbit">▲ BACK TO ORBIT</a><br>
+  © 2026 SCOTT O’NEIL<button class="hbug" data-bug="footer" aria-label="Hidden bug: squash it"><svg viewBox="0 0 8 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1H2zM5 0h1v1H5zM3 1h2v1H3zM0 2h8v1H0zM2 3h4v1H2zM0 4h8v1H0zM1 5h1v1H1zM3 5h2v1H3zM6 5h1v1H6zM0 6h1v1H0zM7 6h1v1H7z"/></svg></button>
+</footer>
+
+<nav class="dock" aria-label="Extras">
+  <button class="dock-btn" id="bug-count" title="Bug Hunt: 5 bugs are hiding on this page" aria-label="Bug Hunt progress">
+    <svg viewBox="0 0 8 7" shape-rendering="crispEdges" aria-hidden="true"><path d="M2 0h1v1H2zM5 0h1v1H5zM3 1h2v1H3zM0 2h8v1H0zM2 3h4v1H2zM0 4h8v1H0zM1 5h1v1H1zM3 5h2v1H3zM6 5h1v1H6zM0 6h1v1H0zM7 6h1v1H7z"/></svg><span id="bug-num">0/5</span>
+  </button>
+  <button class="dock-btn" id="trophy-btn" title="Achievements" aria-label="Achievements" aria-expanded="false" aria-controls="trophies">
+    <svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h2v2h3v2H6v1h1v3H5V7H3v1H1V5h1V4H0V2h3z"/></svg><span id="ach-num">0/17</span>
+  </button>
+  <button class="dock-btn" id="diag-btn" title="Run diagnostics on this page" aria-label="Run diagnostics">
+    <svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h8v1H0zM0 7h8v1H0zM0 1h1v6H0zM7 1h1v6H7zM2 2h1v1H2zM3 3h1v1H3zM2 4h1v1H2zM4 5h2v1H4z"/></svg>
+  </button>
+  <button class="dock-btn" id="palette-btn" title="Change palette" aria-label="Change color palette">
+    <svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="0" y="0" width="3" height="3" style="fill:var(--c1)"/><rect x="5" y="0" width="3" height="3" style="fill:var(--c2)"/><rect x="0" y="5" width="3" height="3" style="fill:var(--c3)"/><rect x="5" y="5" width="3" height="3" style="fill:var(--c4)"/></svg>
+  </button>
+  <button class="dock-btn" id="sound-btn" title="Sound: off" aria-label="Sound" aria-pressed="false">
+    <svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 3h2V2h1V1h1v6H3V6H2V5H0z"/><path class="waves" d="M5 3h1v2H5zM6 1h1v1H6zM7 2h1v4H7zM6 6h1v1H6z"/></svg>
+  </button>
+</nav>
+
+<div class="trophies" id="trophies" hidden>
+  <h3>ACHIEVEMENTS</h3>
+  <p class="note">Test cases for this page. Poke around to pass them.</p>
+  <ul id="ach-list"></ul>
+  <button class="reset" id="ach-reset">RESET PROGRESS</button>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<dialog class="diag" id="diag" aria-labelledby="diag-title">
+  <div class="diag-head"><span id="diag-title">DIAGNOSTICS</span><div><button id="diag-again">RUN AGAIN</button><button id="diag-close" aria-label="Close diagnostics">CLOSE</button></div></div>
+  <div class="diag-out" id="diag-out" role="log" aria-live="polite"></div>
+</dialog>
+
+<script>
+(() => {
+  const PAL = [[8,28,13],[31,74,38],[79,125,44],[143,180,58],[212,233,160]];
+  const BAYER = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5].map(v => (v + .5) / 16);
+  const thr = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+  const dc = (v, x, y) => { let c = Math.floor(v); if (v - c > thr(x, y)) c++; return c < 0 ? 0 : c > 4 ? 4 : c; };
+  // dither with a steeper ramp: mostly solid bands, narrow dithered seams
+  const dcs = (v, x, y) => { let c = Math.floor(v), f = (v - c - 0.5) * 3.2 + 0.5; if (f > thr(x, y)) c++; return c < 0 ? 0 : c > 4 ? 4 : c; };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rng = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const hash = (x, y) => { let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return (h ^ (h >>> 16)) >>> 0; };
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const easeIO = k => k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+  const LX = -0.6, LY = -0.45, LZ = 0.66;  // light from upper left
+
+  // per-visitor conveniences (palette, sound, achievements); the page works fine if storage is blocked
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('so_' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('so_' + k, JSON.stringify(v)); } catch (e) {} }
+  };
+  let jsErrors = 0;
+  addEventListener('error', () => { jsErrors++; });
+
+  // ---------- astronaut sprite ----------
+  // Digits are palette shades (0 darkest .. 4 lightest). A = antenna light, B = backpack light.
+  const C = s => { const p = (17 - s.length) / 2; return '.'.repeat(p) + s + '.'.repeat(p); };
+  const SPRITE = [
+    "..........A......",
+    "..........0......",
+    C("00000"),
+    C("004433300"),
+    C("04443333320"),
+    C("0443333333220"),
+    C("0433333333220"),
+    C("0333333333220"),
+    C("0333333332220"),
+    C("03333333220"),
+    C("011111110"),
+    ".033000000000320.",
+    "04330322222203220",
+    "04330211111203220",
+    "04330222222203220",
+    "04330222B22203220",
+    "04330222222203220",
+    "04330000000003220",
+    "04400111111100330",
+    ".00.033333220.00.",
+    "....033303220....",
+    "....043303220....",
+    "....033303220....",
+    "....011101110....",
+    "...00330.03300...",
+    "...00000.00000..."
+  ];
+  const SW = 17, SH = SPRITE.length;
+  const frameOf = rows => rows.map(r => [...r]);
+  // ' ' keeps the pixel underneath, '.' clears it
+  const patch = (rows, x0, y0, lines) => lines.forEach((ln, i) => [...ln].forEach((ch, j) => { if (ch !== ' ') rows[y0 + i][x0 + j] = ch; }));
+  const FR_IDLE = frameOf(SPRITE);
+  // right arm raised, hand shading the visor
+  const FR_SHADE = frameOf(SPRITE);
+  patch(FR_SHADE, 12, 3, [" 000 ", "04440", "04430", " 0030", "  030", "  030", "  030", " 0330", "0330."]);
+  patch(FR_SHADE, 13, 12, ["30..", "30..", "30..", "30..", "30..", "30..", "0...", "...."]);
+  // turning to look back at the viewer: head turns first, then the body follows a little
+  const helmet = (fr, rows) => rows.forEach((s, i) => { fr[3 + i] = [...C(s)]; });
+  const BODY_TURN = [
+    ".030000000003320.",
+    "04303222222033220",
+    "04302111112033220",
+    "04302222222033220",
+    "0430222B222033220",
+    "04302222222033220",
+    "04300000000033220"
+  ];
+  const turnBody = fr => BODY_TURN.forEach((s, i) => { fr[11 + i] = [...s]; });
+  const FR_T1 = frameOf(SPRITE);   // head a quarter turned: edge of the visor shows
+  helmet(FR_T1, ["004433300", "04443333000", "0443333301140", "0433333301110", "0333333301110", "0333333330110", "03333333300"]);
+  const FR_T2 = frameOf(SPRITE);   // three-quarter turn, shoulders start to follow
+  helmet(FR_T2, ["004433300", "04433000000", "0443011111140", "0433011111140", "0333011111110", "0333301111030", "03333000330"]);
+  turnBody(FR_T2);
+  const FR_LOOK = frameOf(SPRITE); // facing the viewer: visor with a glint
+  helmet(FR_LOOK, ["003333300", "03000000030", "0301111144030", "0301111114030", "0301111111030", "0330111110330", "03300000330"]);
+  turnBody(FR_LOOK);
+
+  // UFO: L = running lights
+  const UFO = ["....000....", "...04430...", "..0444330..", "00000000000", "03333333330", ".0L2L2L2L0.", "..0000000.."];
+
+  function drawSprite(set, ox, oy, blinkOn, frame = FR_IDLE) {
+    frame.forEach((row, y) => row.forEach((ch, x) => {
+      if (ch === '.') return;
+      set(ox + x, oy + y, ch === 'A' ? (blinkOn ? 4 : 2) : ch === 'B' ? (blinkOn ? 1 : 4) : +ch);
+    }));
+  }
+
+  // ---------- scene state ----------
+  const cv = document.getElementById('scene'), ctx = cv.getContext('2d');
+  let W, H, Hv, S, buf, img, L, top, mtn, hill, stars, dimStars, flora, rocks, crystals, pebbles;
+  const worm = { state: 'off', next: 18 + Math.random() * 10, trail: [], tunnel: [], n: 0 };
+  let shoot = null, particles = [], flash = null, storms = [];
+  const ufo = { state: 'off', next: 10 + Math.random() * 8 };
+  const T0 = performance.now();
+  const clock = () => (performance.now() - T0) / 1000;
+  let riseStart = 0, lastT = 0;
+  const astro = { mode: 'idle', until: 0, next: 3 + Math.random() * 5 };
+  const moon = { t: -1 };
+  let sceneBug = null;   // the hidden bug that crawls along the ground (Bug Hunt #1)
+  let sceneBugFound = store.get('bugs', []).includes('scene');
+  let frames = 0;        // rendered frames, sampled by the diagnostics frame-rate check
+
+  function resize() {
+    const vw = innerWidth, vh = innerHeight;
+    S = Math.max(2, Math.round(vh / 150));
+    W = Math.ceil(vw / S); Hv = Math.ceil(vh / S); H = Hv + Math.ceil(160 / S);
+    cv.width = W; cv.height = H;
+    cv.style.width = W * S + 'px'; cv.style.height = H * S + 'px';
+    img = ctx.createImageData(W, H); buf = new Uint8Array(W * H);
+    layout();
+  }
+
+  function layout() {
+    const portrait = W / Hv < 1;
+    const hy = Math.round(Hv * 0.7);
+    const R = Math.round(portrait ? Math.min(Hv * 0.3, W * 0.27) : Math.min(Hv * 0.28, W * 0.19));
+    L = {
+      hy, R, portrait,
+      px: Math.round(W * (portrait ? 0.7 : 0.66)),
+      pyEnd: hy - Math.round(R * 0.45),
+      pyStart: hy + Math.round(R * 1.7),   // fully hidden below the hills
+      sx: Math.round(portrait ? Math.max(3, W * 0.05) : W * 0.28),
+      cliffEnd: Math.round(W * (portrait ? 0.36 : 0.42)),
+      mx: Math.round(W * (portrait ? 0.22 : 0.15)),
+      my: Math.round(Hv * (portrait ? 0.38 : 0.3)),
+      mr: portrait ? 6 : 8,
+      ringA: portrait ? 1.5 : 1.75,
+      tilt: -0.24
+    };
+    const r = rng(1977);
+    const p = Array.from({ length: 8 }, () => r() * 6);
+    const k = Hv / 150;
+
+    mtn = new Int16Array(W);
+    for (let x = 0; x < W; x++)
+      mtn[x] = hy - Math.max(1, Math.round(5 + 3 * Math.sin(x * 0.06 + p[0]) + 2 * Math.sin(x * 0.17 + p[1]) + 1.2 * Math.sin(x * 0.37 + p[2])));
+    hill = new Int16Array(W);
+    for (let x = 0; x < W; x++)
+      hill[x] = hy + 2 - Math.max(0, Math.round(2.5 + 2.5 * Math.sin(x * 0.05 + p[6]) + 1.5 * Math.sin(x * 0.14 + p[7])));
+
+    top = new Int16Array(W);
+    for (let x = 0; x < W; x++) {
+      let y = hy + 3 + Math.round(1.2 * Math.sin(x * 0.29 + p[3]) + 0.8 * Math.sin(x * 0.11 + p[4]));
+      if (x < L.cliffEnd) y -= Math.round(6 + 1.5 * Math.sin(x * 0.17 + p[5]));
+      else if (x < L.cliffEnd + 4) y -= Math.round(6 * (1 - (x - L.cliffEnd) / 4));
+      top[x] = y;
+    }
+    const fy = top[Math.min(W - 1, L.sx + 8)];   // flat footing for the astronaut
+    for (let x = L.sx - 2; x <= L.sx + SW + 1; x++) if (x >= 0 && x < W) top[x] = fy;
+    L.fy = fy;
+    L.ay = fy - SH + 1;   // boots sit down into the crust instead of on top of it
+
+    pebbles = [];   // little lit stones buried in the dirt (multi-pixel, so they never read as stars)
+    const np = Math.round(W * (Hv - hy) / 70);
+    for (let i = 0; i < np; i++) {
+      const x = (r() * W) | 0, y = Math.round(hy + 10 + r() * (Hv - hy - 8));
+      if (y < top[x] + 6) continue;
+      pebbles.push({ x, y, w: 2 + ((r() * 2) | 0), h: r() < 0.5 ? 1 : 2 });
+    }
+
+    stars = [];
+    const n = Math.round(W * hy / 110);
+    for (let i = 0; i < n; i++) {
+      const x = (r() * W) | 0, y = (r() * hy * 0.75) | 0;
+      const dx = x - L.px, dy = y - L.pyEnd;
+      if (dx * dx + dy * dy < (R * 2) ** 2) continue;
+      stars.push({ x, y, ph: r() * 6.28, sp: 0.5 + r() * 1.8, big: r() < 0.22 });
+    }
+    dimStars = [];   // faint, steady background stars
+    const nd = Math.round(W * hy / 45);
+    for (let i = 0; i < nd; i++) dimStars.push({ x: (r() * W) | 0, y: (r() * hy * 0.85) | 0, c: r() < 0.75 ? 1 : 2 });
+
+    // foreground props live on the open ground right of the cliff
+    const g0 = L.cliffEnd + 6, gw = Math.max(1, W - g0 - 3);
+    const taken = [];
+    const spot = pad => { for (let tries = 0; tries < 14; tries++) { const x = Math.round(g0 + r() * gw); if (taken.every(t => Math.abs(t - x) > pad)) { taken.push(x); return x; } } return -1; };
+
+    rocks = [];
+    const nr = Math.max(2, Math.round(W / 55));
+    for (let i = 0; i < nr; i++) { const x = spot(6); if (x < 0) continue; const w = Math.round((2 + r() * 4) * k); rocks.push({ x, w, h: Math.max(2, Math.round(w * (0.55 + r() * 0.3))) }); }
+    if (!portrait && L.sx + SW + 8 < L.cliffEnd - 3) rocks.push({ x: L.sx + SW + 6, w: Math.round(3 * k), h: Math.round(2 * k) + 1 });
+
+    crystals = [];
+    const nc = Math.max(1, Math.round(W / 85));
+    for (let i = 0; i < nc; i++) {
+      const x = spot(7); if (x < 0) continue;
+      const h = Math.round((5 + r() * 6) * k);
+      crystals.push({ x, shards: [[-2, h * 0.6, -0.25], [0, h, 0.05], [2, h * 0.7, 0.3]].map(([ox, sh, lean]) => ({ ox, h: Math.round(sh), lean })), ph: r() * 6.28 });
+    }
+
+    flora = [];
+    const mk = x => ({ x, h: Math.round((6 + r() * 14) * k), r: r() < 0.4 ? 1 : r() < 0.7 ? 2 : 3, bend: (r() - 0.5) * 6, ph: r() * 6.28, ret: 0, target: 0, releaseAt: 0 });
+    if (L.sx > 10) for (let i = 0; i < 2; i++) flora.push(mk(Math.round(2 + r() * (L.sx - 6))));
+    const nf = Math.max(5, Math.round(W / 22));
+    for (let i = 0; i < nf; i++) { const x = spot(3); if (x >= 0 && x < W) flora.push(mk(x)); }
+  }
+
+  const set = (x, y, c) => { if (x >= 0 && y >= 0 && x < W && y < H) buf[y * W + x] = c; };
+
+  function sphere(cx, cy, r, shade) {
+    for (let y = Math.max(0, cy - r); y <= Math.min(H - 1, cy + r); y++)
+      for (let x = Math.max(0, cx - r); x <= Math.min(W - 1, cx + r); x++) {
+        const nx = (x - cx) / r, ny = (y - cy) / r, q = nx * nx + ny * ny;
+        if (q > 1) continue;
+        buf[y * W + x] = dc(shade(nx, ny, Math.sqrt(1 - q)), x, y);
+      }
+  }
+
+  function ring(px, py, front) {
+    const R = L.R, A = R * L.ringA, B = R * 0.4, ca = Math.cos(L.tilt), sa = Math.sin(L.tilt);
+    const R2 = R * R;
+    for (let y = Math.max(0, Math.floor(py - A)); y <= Math.min(H - 1, Math.ceil(py + A)); y++)
+      for (let x = Math.max(0, Math.floor(px - A - 2)); x <= Math.min(W - 1, Math.ceil(px + A + 2)); x++) {
+        const dx = x - px, dy = y - py, u = dx * ca + dy * sa, w = -dx * sa + dy * ca;
+        if ((w > 0) !== front) continue;
+        const e = (u / A) ** 2 + (w / B) ** 2;
+        // a dark seam where the front ring crosses the planet, so it reads as in front
+        if (front && dx * dx + dy * dy < R2 && ((e > 0.55 && e <= 0.62) || (e >= 1 && e < 1.1))) { buf[y * W + x] = 0; continue; }
+        if (e < 0.62 || e > 1 || (e > 0.78 && e < 0.83)) continue;
+        let v = e < 0.78 ? 2.6 : e < 0.94 ? 3.4 : 2.4;
+        if (u > 0) v -= 0.5;
+        buf[y * W + x] = dc(v, x, y);
+      }
+  }
+
+  // moon: click -> spins around to show a laughing face, then spins back
+  function moonState(t) {
+    if (moon.t < 0) return { rot: 0, full: 0, grow: 0, laugh: false };
+    const e = t - moon.t;
+    if (e < 1) { const k = easeIO(e); return { rot: Math.PI * k, full: k, grow: k, laugh: false }; }
+    if (e < 4) return { rot: Math.PI, full: 1, grow: 1, laugh: true };
+    if (e < 5) { const k = easeIO(e - 4); return { rot: Math.PI * (1 + k), full: 1 - k, grow: 1 - k, laugh: false }; }
+    moon.t = -1;
+    return { rot: 0, full: 0, grow: 0, laugh: false };
+  }
+  const moonRadius = ms => Math.round(L.mr * (1 + 0.5 * ms.grow));
+
+  function drawMoon(t) {
+    const ms = moonState(t);
+    const r = moonRadius(ms);
+    const beat = ms.laugh && Math.floor(t * 8) % 2 === 0;
+    const a = ms.rot + Math.PI, ca = Math.cos(a), sa = Math.sin(a);
+    sphere(L.mx, L.my - (beat ? 1 : 0), r, (nx, ny, nz) => {
+      // local (texture) coordinates on the spinning moon; the face lives on the far side at rest
+      const lx = nx * ca + nz * sa, lz = -nx * sa + nz * ca, ly = ny;
+      if (lz > 0.2) {
+        for (const s of [-1, 1]) {   // eyes squeezed shut, slanting down to the outside
+          const ex = lx * s;
+          if (ex > 0.12 && ex < 0.62 && Math.abs(ly - (-0.34 + (ex - 0.12) * 0.42)) < 0.1) return 0;
+        }
+        const mh = beat ? 0.34 : 0.27, mx = lx / 0.44, my = (ly - 0.3) / mh;   // big open laughing mouth
+        if (mx * mx + my * my < 1) return ly < 0.3 - mh + 0.13 ? 4 : ly > 0.3 + mh * 0.4 ? 2 : 0;
+      }
+      const dC = -0.95 * nx - 0.2 * ny - 0.12 * nz;
+      const crescent = dC > 0 ? 1 + dC * 3.6 : 1;
+      const lit = 2.3 + Math.max(0, -0.5 * nx - 0.4 * ny + 0.75 * nz) * 1.6;
+      let v = crescent * (1 - ms.full) + lit * ms.full;
+      if (lz < 0) {
+        if ((lx - 0.3) ** 2 + (ly + 0.15) ** 2 < 0.05) v -= 0.9;
+        if ((lx - 0.05) ** 2 + (ly - 0.45) ** 2 < 0.03) v -= 0.8;
+      }
+      return Math.max(1, v);
+    });
+    return r;
+  }
+
+  function burst(x, y, t) {
+    for (let ring = 0; ring < 2; ring++) {
+      const n = ring ? 12 : 18;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + Math.random() * 0.25, sp = ring ? 6 + Math.random() * 5 : 13 + Math.random() * 8;
+        particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: t, life: 0.9 + Math.random() * 0.7 });
+      }
+    }
+    flash = { x: Math.round(x), y: Math.round(y), t };
+  }
+
+  // UFO: drifts right-to-left every ~20s; click -> stops, spins for a second, then dives behind the planet
+  // lane just under the FULL-size name, computed from the same CSS clamps, so it's right even
+  // when the UFO spawns while the header is in its compact state
+  function ufoLane() {
+    const pad = clamp(innerHeight * 0.09, 40, 96), h1 = clamp(innerWidth * 0.052, 22, 58), role = clamp(innerWidth * 0.016, 10, 16);
+    const below = (pad + h1 * 1.25 + 20 + role * 1.8) / S + 6;
+    return Math.round(Math.min(Math.max(below, Hv * 0.18), L.pyEnd - L.R - 6));
+  }
+  function updateUfo(t, dt) {
+    const u = ufo;
+    if (reduce) return;
+    if (u.state === 'off' && t > u.next) { u.state = 'fly'; u.x = W + 8; u.by = ufoLane(); u.y = u.by; }
+    if (u.state === 'fly') {
+      u.x -= Math.max(12, W / 9) * dt;
+      u.y = u.by + Math.round(Math.sin(t * 2.5));
+      if (u.x < -10) { u.state = 'off'; u.next = t + 16 + Math.random() * 9; }
+    }
+    if (u.state === 'spin' && t - u.ts > 1) { u.state = 'leave'; u.tl = t; u.fx = u.x; u.fy = u.y; }
+    if (u.state === 'leave') {
+      const e = (t - u.tl) / 1.6;
+      if (e >= 1) { u.state = 'off'; u.next = t + 16 + Math.random() * 9; return; }
+      const k = e * e;
+      u.x = u.fx + (L.px + L.R * 0.2 - u.fx) * k;
+      u.y = u.fy + ((L.pyNow ?? L.pyEnd) - L.R * 0.5 - u.fy) * k - Math.sin(Math.PI * e) * 8;
+      u.sc = 1 - 0.85 * k;
+    }
+  }
+  function drawUfo(t) {
+    const u = ufo;
+    let sx = 1, sy = 1, chase = 6;
+    if (u.state === 'spin') { sx = Math.max(0.12, Math.abs(Math.cos((t - u.ts) * Math.PI * 3))); chase = 24; }
+    if (u.state === 'leave') sx = sy = u.sc;
+    const w = Math.max(1, Math.round(11 * sx)), h = Math.max(1, Math.round(7 * sy));
+    const x0 = Math.round(u.x - w / 2), y0 = Math.round(u.y - h / 2);
+    if (w <= 2 && h <= 2) { set(x0, y0, 3); return; }
+    const ph = Math.floor(t * chase);
+    for (let dy = 0; dy < h; dy++) for (let dx = 0; dx < w; dx++) {
+      const cx = Math.min(10, Math.floor((dx + 0.5) * 11 / w)), cy = Math.min(6, Math.floor((dy + 0.5) * 7 / h));
+      const ch = UFO[cy][cx];
+      if (ch !== '.') set(x0 + dx, y0 + dy, ch === 'L' ? ((cx + ph) % 4 < 2 ? 4 : 2) : +ch);
+    }
+  }
+
+  // Worm: every ~40s it tunnels around the dirt (never leaving it). Click -> an inner jaw shoots out and chomps.
+  const dirtOK = (x, y) => { const xi = Math.round(x); return xi >= 2 && xi <= W - 3 && y >= top[xi] + 5 && y <= Hv - 7; };
+  function spawnWorm(t) {
+    for (let tries = 0; tries < 40; tries++) {
+      const x = 4 + Math.random() * (W - 8), y = L.hy + Math.random() * (Hv - L.hy);
+      if (dirtOK(x, y)) {
+        Object.assign(worm, { state: 'on', t0: t, x, y, a: Math.random() * 6.28, ph: Math.random() * 6, trail: [{ x, y }], tunnel: [], chomp: -1, life: 14, done: 0, squash: -1 });
+        return;
+      }
+    }
+    worm.next = t + 5;
+  }
+  function updateWorm(t, dt) {
+    const w = worm;
+    if (w.state === 'off') { if (!reduce && t > w.next) spawnWorm(t); return; }
+    const age = t - w.t0;
+    w.tunnel = w.tunnel.filter(p => t - p.t < 5);
+    if (w.squash >= 0) {   // squashed: lies there flat, then fades out
+      if (t - w.squash > 4) { w.state = 'off'; w.n = 0; w.next = t + 32 + Math.random() * 16; }
+      return;
+    }
+    if (age > w.life) { w.state = 'off'; w.n = 0; w.next = t + 32 + Math.random() * 16; return; }
+    if (w.chomp >= 0 && t - w.chomp < 1.5) return;   // holds still while chomping
+    w.a += (Math.sin(t * 0.8 + w.ph) * 1.3 + Math.sin(t * 2.3 + w.ph * 2) * 0.7) * dt;
+    const sp = 9, nx = w.x + Math.cos(w.a) * sp * dt, ny = w.y + Math.sin(w.a) * sp * dt;
+    if (!dirtOK(nx, ny)) {   // about to break the surface or leave the dirt: turn back toward the middle
+      const ta = Math.atan2((L.hy + 8 + Hv) / 2 - w.y, W / 2 - w.x);
+      const da = ((ta - w.a) % 6.2832 + 9.4248) % 6.2832 - 3.1416;
+      w.a += Math.sign(da) * Math.min(Math.abs(da), 5 * dt);
+      return;
+    }
+    w.x = nx; w.y = ny;
+    const last = w.trail[0];
+    if (Math.hypot(w.x - last.x, w.y - last.y) >= 1) {
+      w.trail.unshift({ x: w.x, y: w.y });
+      if (w.trail.length > 40) w.trail.pop();
+      w.tunnel.push({ x: Math.round(w.x), y: Math.round(w.y), t });
+    }
+  }
+  function drawWorm(t) {
+    const w = worm;
+    for (const p of w.tunnel) if ((t - p.t) / 5 < thr(p.x, p.y)) set(p.x, p.y, 1);   // fading tunnel
+    if (w.state !== 'on') return;
+    if (w.squash >= 0) { drawSquashed(t); return; }
+    const age = t - w.t0, N = 12;
+    w.n = Math.max(1, Math.round(N * Math.min(1, age) * Math.min(1, w.life - age)));
+    const seg = i => w.trail[Math.min(w.trail.length - 1, i * 2)];
+    for (let i = w.n - 1; i >= 1; i--) {   // body, tail first, banded
+      const p = seg(i), x = Math.round(p.x), y = Math.round(p.y), c = i % 2 ? 2 : 3;
+      const big = i < w.n - 2;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (big || dx === 0 || dy === 0) set(x + dx, y + dy, c);
+      set(x, y + 1, 1);
+    }
+    const hx = w.x, hy = w.y, ca = Math.cos(w.a), sa = Math.sin(w.a);
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) if (dx * dx + dy * dy <= 5) set(Math.round(hx + dx), Math.round(hy + dy), 3);
+    set(Math.round(hx - ca * 0.5 - sa * 1.2), Math.round(hy - sa * 0.5 + ca * 1.2) - 1, 0);   // eye
+    const e = w.chomp >= 0 ? t - w.chomp : 99, chomping = e < 1.5;
+    const spread = chomping ? 2 : 1;   // outer mandibles open wider while the inner jaw is out
+    const fx = hx + ca * 2.5, fy = hy + sa * 2.5;
+    set(Math.round(fx - sa * spread), Math.round(fy + ca * spread), 4);
+    set(Math.round(fx + sa * spread), Math.round(fy - ca * spread), 4);
+    if (chomping) {
+      const ext = e < 0.25 ? e / 0.25 : e < 1.25 ? 1 : Math.max(0, (1.5 - e) / 0.25), len = Math.round(ext * 6);
+      for (let j = 1; j <= len; j++) set(Math.round(fx + ca * j), Math.round(fy + sa * j), j === len ? 3 : 1);
+      if (len >= 2) {
+        const tx = fx + ca * len, ty = fy + sa * len;
+        const open = e > 0.25 && e < 1.25 && Math.floor((e - 0.25) / 0.17) % 2 === 0;
+        if (open) {
+          for (const s of [-1, 1]) { set(Math.round(tx - sa * s), Math.round(ty + ca * s), 4); set(Math.round(tx + ca - sa * s * 1.5), Math.round(ty + sa + ca * s * 1.5), 4); }
+        } else { set(Math.round(tx), Math.round(ty), 4); set(Math.round(tx + ca), Math.round(ty + sa), 4); }
+      }
+    }
+  }
+
+  // third click: the worm gets flattened into a pancake with X eyes, lies there, then fades away
+  function drawSquashed(t) {
+    const w = worm, e = t - w.squash, k = Math.min(1, e / 0.3);
+    const fade = e > 3 ? (e - 3) : 0;   // dither out over the last second
+    const put = (x, y, c) => { x = Math.round(x); y = Math.round(y); if (fade > thr(x, y)) return; set(x, y, c); };
+    const hx = w.x, hy = w.y, ca = Math.cos(w.a), sa = Math.sin(w.a);
+    // body: stays on its own curve, its thickness pressing down to a thin flat ribbon
+    const len = Math.min(w.trail.length, w.n * 2);
+    for (let j = len - 1; j >= 1; j--) {
+      const p = w.trail[j], q = w.trail[j - 1];
+      const tx = q.x - p.x, ty = q.y - p.y, tl = Math.hypot(tx, ty) || 1, nx = -ty / tl, ny = tx / tl;
+      const thick = 1.2 * (1 - k) + 0.6 * k;   // half-thickness: round tube -> flat
+      const c = Math.floor(j / 2) % 2 ? 2 : 3;
+      for (let o = -thick; o <= thick + 0.01; o += 0.5) put(p.x + nx * o, p.y + ny * o, c);
+      put(p.x + nx * (thick + 1), p.y + ny * (thick + 1), 1);   // flattened edge spreads a little
+      put(p.x - nx * (thick + 1), p.y - ny * (thick + 1), 1);
+    }
+    // head: spreads out along the direction it was facing and flattens across it
+    const ru = 2.4 + 3.1 * k, rv = 2.4 - 0.6 * k;
+    const cx = Math.round(hx), cy = Math.round(hy), R = Math.ceil(ru) + 1;
+    for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) {
+      const u = dx * ca + dy * sa, v = -dx * sa + dy * ca;
+      if ((u / ru) ** 2 + (v / rv) ** 2 <= 1) put(cx + dx, cy + dy, 3);
+    }
+    if (k >= 1) {
+      for (const eu of [-2, 2]) {   // X eyes, along the flattened head
+        const ex = Math.round(hx + ca * eu), ey = Math.round(hy + sa * eu);
+        put(ex - 1, ey - 1, 0); put(ex + 1, ey - 1, 0); put(ex, ey, 0); put(ex - 1, ey + 1, 0); put(ex + 1, ey + 1, 0);
+      }
+    }
+    for (const side of [-1, 1]) put(hx + ca * (ru + 0.3) - sa * side, hy + sa * (ru + 0.3) + ca * side, 4);   // limp mandibles
+    if (e < 0.6) for (const [ox, oy] of [[-6, -2], [5, -2], [-8, 0], [7, -1], [0, -3], [-3, 2], [3, 2]]) put(hx + ox, hy + oy, e < 0.3 ? 4 : 2);   // splat
+  }
+
+  // Bug Hunt #1: a small dark beetle that wanders the lit crust right of the cliff
+  function drawSceneBug(t, dt) {
+    const b = sceneBug || (sceneBug = { x: null });
+    if (b.x == null) {
+      b.lo = L.cliffEnd + 8; b.hi = W - 6;
+      b.x = b.lo + Math.random() * Math.max(1, b.hi - b.lo); b.dir = Math.random() < 0.5 ? -1 : 1; b.splat = null;
+    }
+    const gy = x => top[clamp(Math.round(x), 0, W - 1)] - 1;
+    if (b.splat != null) {
+      const e = t - b.splat, x = Math.round(b.x), y = gy(b.x);
+      for (const [ox, oy] of [[-3, 0], [3, 0], [-1, -1], [1, -1], [0, 0], [-2, -2], [2, -2]]) set(x + ox, y + oy, e < 0.3 ? 4 : 2);
+      return;
+    }
+    if (!reduce) {
+      b.x += b.dir * 2.4 * dt;
+      if (b.x < b.lo || b.x > b.hi) { b.dir *= -1; b.x = clamp(b.x, b.lo, b.hi); }
+      if (Math.random() < dt * 0.12) b.dir *= -1;
+    }
+    const x = Math.round(b.x), y = gy(b.x), step = Math.floor(t * 6) % 2, d = b.dir;
+    const px = (dx, dy, c) => set(x + dx * d, y + dy, c);
+    // mid-tone shell so it reads against both the dark hills and the lit crust, but stays easy to miss
+    for (let dx = -1; dx <= 1; dx++) px(dx, -2, dx === -1 ? 3 : 2);   // shell top, lit from the left
+    for (let dx = -2; dx <= 2; dx++) px(dx, -1, 2);                   // body
+    px(2, -1, 4);                                                     // eye
+    px(3, -2, 1);                                                     // antenna
+    for (const dx of step ? [-2, 0, 2] : [-1, 1]) px(dx, 0, 1);       // legs
+  }
+
+  function draw(now) {
+    const t = (now - T0) / 1000, dt = Math.min(0.1, Math.max(0, t - lastT));
+    lastT = t;
+    const k = reduce ? 1 : clamp((t - riseStart) / 8, 0, 1), ease = 1 - Math.pow(1 - k, 3);
+    const { hy, R, px } = L;
+    const py = Math.round(L.pyEnd + (L.pyStart - L.pyEnd) * (1 - ease));
+
+    // sky, with a glow around the planet
+    for (let y = 0; y < H; y++) {
+      const base = -0.35 + Math.pow(Math.min(1, y / hy), 2.2) * 1.85;
+      for (let x = 0; x < W; x++) {
+        let v = base;
+        const gx = (x - px) / (R * 2.6), gy = (y - py) / (R * 2.0), d = gx * gx + gy * gy;
+        if (d < 1) v += (1 - d) * (1 - d);
+        if (v > 2) v = 2;
+        buf[y * W + x] = Math.min(2, dcs(v, x, y));
+      }
+    }
+
+    for (const s of dimStars) { const i = s.y * W + s.x; if (buf[i] === 0) buf[i] = s.c; }
+
+    // stars: fewer, bolder; big ones are little crosses
+    for (const s of stars) {
+      const i = s.y * W + s.x;
+      if (buf[i] > 1) continue;
+      const tw = reduce ? 0 : Math.sin(t * s.sp + s.ph);
+      buf[i] = tw > 0.7 ? 4 : tw < -0.8 ? 2 : 3;
+      if (s.big) {
+        const arm = tw > 0.7 ? 3 : 2;
+        for (const [ox, oy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const xx = s.x + ox, yy = s.y + oy;
+          if (xx >= 0 && yy >= 0 && xx < W && buf[yy * W + xx] <= 1) buf[yy * W + xx] = arm;
+        }
+        if (s.boost != null) {   // clicked: flare up for a moment
+          const p = (t - s.boost) / 0.7;
+          if (p >= 1) s.boost = null;
+          else {
+            const size = Math.round(1 + 2.5 * Math.sin(Math.PI * p));
+            buf[i] = 4;
+            for (let kk = 1; kk <= size; kk++) for (const [ox, oy] of [[1,0],[-1,0],[0,1],[0,-1]]) set(s.x + ox * kk, s.y + oy * kk, kk < size ? 4 : 3);
+            if (size >= 2) for (const [ox, oy] of [[1,1],[-1,1],[1,-1],[-1,-1]]) set(s.x + ox, s.y + oy, 3);
+          }
+        }
+      }
+    }
+
+    // shooting star (slow enough to click)
+    if (!reduce && !shoot && Math.random() < dt * 0.15) shoot = { t, x: W * (0.05 + Math.random() * 0.45), y: 3 + Math.random() * hy * 0.3 };
+    if (shoot) {
+      const p = (t - shoot.t) / 1.8;
+      if (p > 1) shoot = null;
+      else {
+        shoot.hx = shoot.x + p * W * 0.3; shoot.hy = shoot.y + p * W * 0.1;
+        for (let i = 0; i < 10; i++) {
+          const x = Math.round(shoot.hx - i * 1.5), y = Math.round(shoot.hy - i * 0.5);
+          if (x >= 0 && y >= 0 && x < W && y < hy && buf[y * W + x] <= 1) buf[y * W + x] = i < 1 ? 4 : i < 4 ? 3 : 2;
+        }
+      }
+    }
+
+    drawMoon(t);
+
+    updateUfo(t, dt);
+    if (ufo.state === 'leave') drawUfo(t);   // flying off behind the planet
+
+    // ringed planet, with any storms the visitor has started
+    L.pyNow = py;
+    storms = storms.filter(s => t - s.t < 7);
+    for (const s of storms) if (Math.random() < dt * 1.5) s.flashUntil = t + 0.08;
+    ring(px, py, false);
+    sphere(px, py, R, (nx, ny, nz) => {
+      const d = nx * LX + ny * LY + nz * LZ;
+      let v = 0.7 + Math.max(0, d) * 3.4;
+      const band = Math.sin((ny + nx * 0.12) * 12 + 0.6);
+      if (band > 0.6) v -= 0.7; else if (band < -0.85) v += 0.3;
+      for (const s of storms) {
+        const age = t - s.t, g = Math.min(1, age / 0.6) * Math.min(1, 7 - age), sr = s.size * g;
+        if (sr < 0.03) continue;
+        const dx = nx - s.nx, dy = (ny - s.ny) * 1.6, rr = Math.hypot(dx, dy);
+        if (rr >= sr) continue;
+        const q = rr / sr, lit = Math.max(0.35, d);
+        if (q < 0.16) v = 0.8;   // the eye
+        else v = Math.sin(2 * Math.atan2(dy, dx) + s.dir * (q * 9 - age * 3)) > 0.1 ? 1.3 + lit * 2.8 : 0.9 + lit * 0.8;
+        if (t < (s.flashUntil || 0) && q < 0.8) v += 1.6;   // lightning
+      }
+      if (nx * nx + ny * ny > 0.82 && d > 0.05) v += 0.7;  // bright atmospheric limb
+      return Math.max(0.6, v);
+    });
+    ring(px, py, true);
+
+    // firework particles from clicked shooting stars
+    particles = particles.filter(p => t - p.born < p.life);
+    for (const p of particles) {
+      p.vy += 16 * dt; p.vx *= 1 - 1.4 * dt; p.vy *= 1 - 1.4 * dt;
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      const age = (t - p.born) / p.life;
+      set(Math.round(p.x), Math.round(p.y), age < 0.35 ? 4 : age < 0.7 ? 3 : 2);
+      if (age < 0.3) set(Math.round(p.x - p.vx * 0.06), Math.round(p.y - p.vy * 0.06), 3);
+    }
+    if (flash && t - flash.t < 0.2) {
+      const rr = t - flash.t < 0.1 ? 3 : 2;
+      for (let i = -rr; i <= rr; i++) { set(flash.x + i, flash.y, 4); set(flash.x, flash.y + i, 4); }
+      set(flash.x - 1, flash.y - 1, 3); set(flash.x + 1, flash.y + 1, 3); set(flash.x - 1, flash.y + 1, 3); set(flash.x + 1, flash.y - 1, 3);
+    }
+
+    if (ufo.state === 'fly' || ufo.state === 'spin') drawUfo(t);
+
+    // far mountains, lit on the slopes that face the planet
+    for (let x = 0; x < W; x++) {
+      const m = mtn[x];
+      for (let y = m; y < H; y++) buf[y * W + x] = 1;
+      const facing = x < px ? (x < W - 1 && mtn[x + 1] > m) : (x > 0 && mtn[x - 1] > m);
+      if (facing && Math.abs(x - px) < R * 3.2) buf[m * W + x] = 2;
+    }
+
+    // nearer hills, darker, with a thin rim
+    for (let x = 0; x < W; x++) {
+      const h0 = hill[x];
+      buf[h0 * W + x] = 1;
+      for (let y = h0 + 1; y < H; y++) buf[y * W + x] = 0;
+    }
+
+    // foreground ground + cliff: bright lit crust, a grainy band under it, wavy strata and pebbles deeper down
+    for (let x = 0; x < W; x++) {
+      const tp = top[x];
+      const nb = Math.max(x > 0 ? top[x - 1] : tp, x < W - 1 ? top[x + 1] : tp);
+      const edge = Math.max(tp, nb - 1);
+      const lit = x > L.sx + SW && x < L.cliffEnd + 6;   // cliff edge facing the planet
+      for (let y = tp; y < H; y++) {
+        const d = y - tp;
+        let c;
+        if (y === tp) c = lit ? 3 : dc(2.55, x, y);
+        else if (y <= edge) c = 2;                        // vertical step faces
+        else if (d === 1) c = dc(lit ? 2.3 : 1.85, x, y);
+        else if (d === 2) c = dc(1.3, x, y);
+        else if (d < 7) c = dc(0.95 - (d - 3) * 0.22, x, y);
+        else c = Math.sin(y * 0.55 + Math.sin(x * 0.09 + y * 0.02) * 1.6) > 0.93 && thr(x, y) < 0.5 ? 1 : 0;
+        buf[y * W + x] = c;
+      }
+    }
+    for (const p of pebbles) {
+      for (let dy = 0; dy < p.h; dy++) for (let dx = 0; dx < p.w; dx++) set(p.x + dx, p.y + dy, 1);
+      set(p.x, p.y, 2);
+    }
+
+    updateWorm(t, dt);
+    drawWorm(t);
+
+    // boulders, lit from the upper left
+    for (const b of rocks) {
+      const base = top[Math.min(W - 1, b.x)] + 1;
+      for (let dy = -b.h; dy <= 0; dy++) for (let dx = -b.w; dx <= b.w; dx++) {
+        const nx = dx / b.w, ny = dy / b.h, q = nx * nx + ny * ny;
+        if (q > 1) continue;
+        const d = -0.6 * nx - 0.75 * ny;
+        set(b.x + dx, base + dy, q > 0.8 ? 0 : d > 0.75 ? 2 : d > 0.25 ? 1 : 0);
+      }
+    }
+
+    // glowing crystal clusters
+    for (const c of crystals) {
+      const glow = reduce || Math.sin(t * 1.1 + c.ph) > -0.2;
+      for (const s of c.shards) {
+        const bx = c.x + s.ox, base = top[clamp(bx, 0, W - 1)];
+        for (let i = 0; i < s.h; i++) {
+          const y = base - i, hw = Math.round((1 - i / s.h) * 1.4), cx = bx + Math.round(i * s.lean);
+          for (let dx = -hw; dx <= hw; dx++) set(cx + dx, y, i === s.h - 1 ? (glow ? 4 : 3) : dx < 0 ? 3 : dx > 0 ? 1 : 2);
+        }
+      }
+    }
+
+    // alien flora: curved stalks, leaves, glowing bulbs. Hovered ones sink into the ground.
+    for (const f of flora) {
+      if (f.releaseAt && t > f.releaseAt) { f.target = 0; f.releaseAt = 0; }
+      f.ret = clamp(f.ret + clamp(f.target - f.ret, -dt * 5, dt * 5), 0, 1);
+      const base = top[f.x], hh = Math.round(f.h * (1 - f.ret)), sunk = f.h - hh;
+      const stemX = j => f.x + Math.round(f.bend * (j / f.h) ** 2);
+      for (let i = 0; i < hh; i++) set(stemX(i + sunk), base - i, 0);
+      for (const [fr, side] of [[0.35, -1], [0.55, 1], [0.75, -1]]) {
+        const j = Math.round(f.h * fr), i = j - sunk;
+        if (i < 1) continue;
+        const x0 = stemX(j);
+        set(x0 + side, base - i, 0); set(x0 + side * 2, base - i - 1, 0);
+      }
+      const cx = stemX(f.h), cy = base - hh - f.r;
+      for (let y = -f.r; y <= f.r; y++) for (let x = -f.r; x <= f.r; x++)
+        if (x * x + y * y <= f.r * f.r + 1 && cy + y < base) set(cx + x, cy + y, 0);
+      if (cy < base) {
+        const on = reduce || Math.sin(t * 1.3 + f.ph) > 0;
+        set(cx, cy, f.ret > 0.5 ? 1 : on ? 3 : 2);
+        if (f.r >= 2 && cy - 1 < base) set(cx - 1, cy - 1, on ? 2 : 1);
+      }
+    }
+
+    if (!sceneBugFound || (sceneBug && sceneBug.splat != null && t - sceneBug.splat < 0.6)) drawSceneBug(t, dt);
+
+    // the astronaut: idles, sometimes shades his eyes, looks back when clicked
+    if (astro.mode !== 'idle' && t > astro.until) { astro.mode = 'idle'; astro.next = t + 6 + Math.random() * 10; }
+    if (!reduce && astro.mode === 'idle' && t > astro.next) { astro.mode = 'shade'; astro.until = t + 2.2 + Math.random() * 1.6; }
+    let frame = FR_IDLE;
+    if (astro.mode === 'shade') frame = FR_SHADE;
+    else if (astro.mode === 'look') {
+      const e = t - astro.ts, left = astro.until - t;
+      frame = e < 0.14 || left < 0.14 ? FR_T1 : e < 0.28 || left < 0.28 ? FR_T2 : FR_LOOK;
+    }
+    // contact shadow under the boots
+    for (let x = L.sx + 2; x <= L.sx + SW - 3; x++) { set(x, L.fy + 1, 0); if (x > L.sx + 3 && x < L.sx + SW - 4) set(x, L.fy + 2, 0); }
+    drawSprite(set, L.sx, L.ay, reduce || Math.floor(t * 1.2) % 2 === 0, frame);
+
+    const d = img.data;
+    for (let i = 0, j = 0; i < buf.length; i++, j += 4) { const c = PAL[buf[i]]; d[j] = c[0]; d[j + 1] = c[1]; d[j + 2] = c[2]; d[j + 3] = 255; }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // ---------- interaction ----------
+  const toLow = e => [e.clientX / S, e.clientY / S];
+  const onStar = (x, y) => shoot && shoot.hx != null && (Math.hypot(x - shoot.hx, y - shoot.hy) < 7 || Math.hypot(x - (shoot.hx - 7), y - (shoot.hy - 2.3)) < 6);
+  const onMoon = (x, y) => Math.hypot(x - L.mx, y - L.my) <= moonRadius(moonState(clock())) + 2.5;
+  const onAstro = (x, y) => x >= L.sx - 1 && x <= L.sx + SW + 1 && y >= L.ay - 1 && y <= L.ay + SH + 1;
+  const onPlant = (f, x, y) => {
+    const base = top[f.x], x0 = Math.min(f.x, f.x + f.bend) - f.r - 2, x1 = Math.max(f.x, f.x + f.bend) + f.r + 2;
+    return x >= x0 && x <= x1 && y >= base - f.h - 2 * f.r - 2 && y <= base + 1;
+  };
+
+  const onUfo = (x, y) => ufo.state === 'fly' && Math.abs(x - ufo.x) <= 7 && Math.abs(y - ufo.y) <= 5;
+  const onWorm = (x, y) => worm.state === 'on' && worm.squash < 0 && (Math.hypot(x - worm.x - 0.5, y - worm.y - 0.5) < 4 || worm.trail.slice(0, worm.n * 2).some(p => Math.hypot(x - p.x - 0.5, y - p.y - 0.5) < 3));
+  const onCross = (x, y) => stars.find(s => s.big && Math.abs(x - s.x - 0.5) <= 2.5 && Math.abs(y - s.y - 0.5) <= 2.5);
+  const onPlanet = (x, y) => L.pyNow != null && Math.hypot(x - L.px, y - L.pyNow) <= L.R && y < mtn[clamp(Math.floor(x), 0, W - 1)];
+
+  const onSceneBug = (x, y) => !sceneBugFound && sceneBug && sceneBug.x != null && sceneBug.splat == null &&
+    Math.abs(x - sceneBug.x - 0.5) < 4 && Math.abs(y - (top[clamp(Math.round(sceneBug.x), 0, W - 1)] - 2)) < 4;
+
+  cv.addEventListener('click', e => {
+    const [x, y] = toLow(e), t = clock();
+    if (onSceneBug(x, y)) { sceneBug.splat = t; sceneBugFound = true; foundBug('scene'); return; }
+    if (onUfo(x, y)) { ufo.state = 'spin'; ufo.ts = t; sfx('ufo'); achieve('ufo'); return; }
+    if (onStar(x, y)) { burst(shoot.hx, shoot.hy, t); shoot = null; sfx('firework'); achieve('firework'); return; }
+    if (onMoon(x, y)) { if (moon.t < 0) { moon.t = t; sfx('moon'); achieve('moon'); } return; }
+    if (onAstro(x, y)) {
+      if (astro.mode !== 'look') { astro.ts = t; sfx('astro'); }
+      astro.mode = 'look'; astro.until = Math.max(astro.until, t + 3);
+      achieve('astro');
+      return;
+    }
+    if (onWorm(x, y)) {
+      if (!(worm.chomp >= 0 && t - worm.chomp < 1.5)) {   // clicks mid-chomp don't count
+        if (worm.done >= 2) { worm.squash = t; sfx('squash'); achieve('worm'); }   // third click after two full chomps
+        else { worm.chomp = t; worm.done++; worm.life = Math.max(worm.life, t - worm.t0 + 3); sfx('chomp'); achieve('chomp'); }
+      }
+      return;
+    }
+    const cs = onCross(x, y);
+    if (cs) { cs.boost = t; sfx('star'); achieve('star'); return; }
+    if (onPlanet(x, y)) {
+      storms.push({ nx: (x - L.px) / L.R, ny: (y - L.pyNow) / L.R, t, size: 0.2 + Math.random() * 0.1, dir: Math.random() < 0.5 ? 1 : -1 });
+      if (storms.length > 4) storms.shift();
+      sfx('storm'); achieve('storm');
+    }
+  });
+  const duck = f => { if (!f.target) { sfx('plant'); achieve('plant'); } f.target = 1; };
+  cv.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const [x, y] = toLow(e);
+    for (const f of flora) { if (onPlant(f, x, y)) duck(f); else f.target = 0; }
+    cv.style.cursor = onSceneBug(x, y) || onUfo(x, y) || onStar(x, y) || onMoon(x, y) || onAstro(x, y) || onWorm(x, y) || onCross(x, y) || onPlanet(x, y) ? 'pointer' : 'default';
+  });
+  cv.addEventListener('pointerleave', () => { for (const f of flora) if (!f.releaseAt) f.target = 0; });
+  cv.addEventListener('pointerdown', e => {   // touch has no hover: a tap makes plants duck for a moment
+    if (e.pointerType === 'mouse') return;
+    const [x, y] = toLow(e), t = clock();
+    for (const f of flora) if (onPlant(f, x, y)) { duck(f); f.releaseAt = t + 2.5; }
+  });
+
+  let lastW = 0, lastH = 0;
+  function onResize() {
+    const w = innerWidth, h = innerHeight;
+    if (w === lastW && Math.abs(h - lastH) < 160) return;  // ignore mobile address-bar jiggle
+    lastW = w; lastH = h;
+    resize();
+    // everything positioned in the old scene's coordinates gets reset so nothing is stranded
+    const t = clock();
+    Object.assign(worm, { state: 'off', n: 0, trail: [], tunnel: [], next: t + 12 + Math.random() * 10 });
+    if (ufo.state !== 'off') Object.assign(ufo, { state: 'off', next: t + 8 + Math.random() * 8 });
+    storms = []; particles = []; shoot = null; flash = null;
+    if (sceneBug) Object.assign(sceneBug, { x: null });
+    draw(performance.now());
+  }
+  addEventListener('resize', onResize);
+  onResize();
+  let last = 0;
+  const loop = now => { if (now - last > 33) { last = now; frames++; draw(now); } requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+
+  // ---------- avatar ----------
+  const av = document.getElementById('avatar'), actx = av.getContext('2d');
+  // front-facing helmet; the visor is see-through when a photo is available (assets/face.jpg)
+  function drawAvatar(hasPhoto) {
+    const AW = 30, AH = 30, aimg = actx.createImageData(AW, AH), ad = aimg.data;
+    const put = (x, y, c, a = 255) => { if (x < 0 || y < 0 || x >= AW || y >= AH) return; const i = (y * AW + x) * 4, p = PAL[c]; ad[i] = p[0]; ad[i + 1] = p[1]; ad[i + 2] = p[2]; ad[i + 3] = a; };
+    for (let y = 0; y < AH; y++) for (let x = 0; x < AW; x++) put(x, y, 1);
+    for (const [x, y] of [[2,3],[26,2],[4,10],[27,9],[1,20],[28,17]]) put(x, y, 3);
+    for (let y = 22; y < AH; y++) {   // shoulders
+      const hw = 8 + (y - 22) * 1.4;
+      for (let x = 0; x < AW; x++) {
+        const dx = x - 15;
+        if (Math.abs(dx) > hw) continue;
+        put(x, y, Math.abs(dx) > hw - 1 ? 0 : dx < -hw * 0.45 ? 4 : dx > hw * 0.5 ? 2 : 3);
+      }
+    }
+    for (let y = 0; y < AH; y++) for (let x = 0; x < AW; x++) {   // helmet dome
+      const nx = (x - 15) / 12.5, ny = (y - 14) / 12.5, q = nx * nx + ny * ny;
+      if (q > 1) continue;
+      if (q > 0.85) { put(x, y, 0); continue; }
+      const nz = Math.sqrt(1 - q);
+      put(x, y, clamp(dc(1.6 + (-0.6 * nx - 0.5 * ny + 0.62 * nz) * 2.2, x, y), 1, 4));
+    }
+    for (let x = 6; x <= 24; x++) { put(x, 24, 0); put(x, 25, 1); put(x, 26, 1); }   // neck ring
+    for (const xs of [[1, 2, 3], [26, 27, 28]]) for (let y = 10; y <= 18; y++) for (const x of xs)   // ear pieces
+      put(x, y, x === xs[0] && xs[0] < 15 || x === xs[2] && xs[0] > 15 || y === 10 || y === 18 ? 0 : 2);
+    for (let y = 0; y < AH; y++) for (let x = 0; x < AW; x++) {   // visor + rim
+      const e = ((x - 15) / 8.5) ** 2 + ((y - 14) / 7.5) ** 2;
+      if (e < 1) hasPhoto ? put(x, y, 0, 0) : put(x, y, dc(0.3 + (1 - e) * 0.9 - (y - 7) * 0.03, x, y));
+      else if (e < 1.32) put(x, y, 0);
+    }
+    for (const [x, y] of [[19, 9], [20, 9], [21, 10], [22, 11], [20, 10]]) put(x, y, 4);   // glint
+    for (const [x, y] of [[18, 9], [22, 12]]) put(x, y, 3);
+    for (const y of [1, 2, 3]) put(22, y, 0);   // antenna
+    put(22, 0, 4);
+    actx.putImageData(aimg, 0, 0);
+  }
+  const face = document.getElementById('face'), avBox = document.getElementById('avatar-box');
+  const showPhoto = () => { face.hidden = false; avBox.classList.add('has-photo'); drawAvatar(true); };
+  drawAvatar(false);
+  if (face.complete && face.naturalWidth) showPhoto();
+  else { face.addEventListener('load', showPhoto, { once: true }); face.addEventListener('error', () => face.remove(), { once: true }); }
+
+  // ---------- scroll: fade the scene, reveal content ----------
+  const veil = document.getElementById('veil'), masthead = document.getElementById('masthead'), hint = document.querySelector('.scroll-hint');
+  let pendingRise = false;
+  function onScroll() {
+    const p = Math.min(1, scrollY / (innerHeight * 0.85));
+    const stepped = Math.round(p * 6) / 6;  // fade in palette-like steps
+    veil.style.opacity = (stepped * 0.8).toFixed(3);
+    hint.classList.toggle('gone', scrollY > 20);
+    const deep = scrollY > innerHeight * 0.55;   // same cutoff as the header shrink
+    if (deep !== document.body.classList.contains('deep')) {
+      document.body.classList.toggle('deep', deep);
+      masthead.classList.toggle('compact', deep);
+      if (deep) { for (const f of flora) { f.target = 0; f.releaseAt = 0; } cv.style.cursor = 'default'; }
+    }
+    // replay the rise as soon as we're back above the cutoff, even if the scroll up was interrupted
+    if (pendingRise && !deep) { pendingRise = false; riseStart = clock(); }
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // back to orbit: scroll up, then replay the planet rising
+  document.getElementById('to-orbit').addEventListener('click', e => {
+    e.preventDefault();
+    riseStart = Infinity;   // sink the planet right away; it rises again once we're back at the top
+    pendingRise = true;
+    if (scrollY > 2) scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    onScroll();
+    achieve('regression');
+  });
+
+  const items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+    items.forEach(el => io.observe(el));
+  } else items.forEach(el => el.classList.add('in'));
+
+  // ---------- collapsible sections ----------
+  document.querySelectorAll('.panel-head').forEach(head => {
+    const btn = head.querySelector('.toggle'), panel = head.closest('.panel'), body = document.getElementById(btn.getAttribute('aria-controls'));
+    head.addEventListener('click', e => { if (!e.target.closest('.toggle')) btn.click(); });
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      panel.classList.toggle('closed', open);
+      body.inert = open;
+      sfx('toggle');
+    });
+  });
+
+  // =============== extras: sound, palettes, achievements, Bug Hunt, diagnostics, bug report ===============
+
+  // ---- chiptune sound effects (off by default) ----
+  let audio = null, soundOn = !!store.get('sound', false);
+  function tone(f, d, { type = 'square', vol = 0.04, at = 0, to = null } = {}) {
+    const t0 = audio.currentTime + at, o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t0);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t0 + d);
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+    o.connect(g).connect(audio.destination); o.start(t0); o.stop(t0 + d + 0.02);
+  }
+  function noise(d, { vol = 0.05, at = 0, freq = 1800 } = {}) {
+    const t0 = audio.currentTime + at, len = Math.ceil(audio.sampleRate * d), b = audio.createBuffer(1, len, audio.sampleRate), ch = b.getChannelData(0);
+    for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+    const s = audio.createBufferSource(), f = audio.createBiquadFilter(), g = audio.createGain();
+    s.buffer = b; f.type = 'lowpass'; f.frequency.value = freq;
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+    s.connect(f).connect(g).connect(audio.destination); s.start(t0);
+  }
+  const SFX = {
+    toggle: () => tone(520, 0.05, { vol: 0.025 }),
+    star: () => { tone(1320, 0.06); tone(1760, 0.08, { at: 0.06 }); },
+    firework: () => { noise(0.35, { vol: 0.08, freq: 2500 }); tone(880, 0.08, { at: 0.02 }); tone(1175, 0.1, { at: 0.1 }); },
+    moon: () => [660, 550, 660, 550, 440].forEach((f, i) => tone(f, 0.07, { at: i * 0.09, vol: 0.035 })),
+    astro: () => tone(440, 0.14, { to: 880, vol: 0.03 }),
+    ufo: () => tone(300, 0.5, { type: 'sine', to: 1200, vol: 0.05 }),
+    storm: () => { noise(0.7, { vol: 0.07, freq: 500 }); tone(90, 0.4, { type: 'triangle', vol: 0.06 }); },
+    chomp: () => [0, 0.17, 0.34].forEach(a => tone(220, 0.05, { at: a + 0.25 })),
+    squash: () => { noise(0.15, { vol: 0.09, freq: 900 }); tone(140, 0.18, { to: 60 }); },
+    plant: () => tone(330, 0.12, { to: 180, type: 'triangle', vol: 0.03 }),
+    bug: () => { noise(0.08, { vol: 0.06, freq: 1200 }); tone(990, 0.06, { at: 0.05 }); tone(1320, 0.08, { at: 0.11 }); },
+    achieve: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.09, { at: 0.15 + i * 0.08, vol: 0.035 })),
+    tick: () => tone(1200, 0.02, { vol: 0.015 }),
+    palette: () => { tone(784, 0.05); tone(988, 0.07, { at: 0.05 }); },
+    on: () => { tone(392, 0.06); tone(784, 0.09, { at: 0.07 }); }
+  };
+  function sfx(name) {
+    if (!soundOn || !SFX[name]) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      SFX[name]();
+    } catch (e) {}
+  }
+  const soundBtn = document.getElementById('sound-btn');
+  const syncSound = () => {
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    soundBtn.querySelector('.waves').style.display = soundOn ? '' : 'none';
+    soundBtn.title = soundOn ? 'Sound: on' : 'Sound: off';
+  };
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn; store.set('sound', soundOn); syncSound();
+    if (soundOn) { sfx('on'); achieve('sound'); }
+  });
+  syncSound();
+
+  // ---- palettes: recolors the page and the pixel art together ----
+  const PALETTES = [
+    { id: 'green', name: 'Green', hex: ['#081c0d', '#1f4a26', '#4f7d2c', '#8fb43a', '#d4e9a0'] },
+    { id: 'amber', name: 'Amber', hex: ['#1a0f05', '#4a2c0c', '#8a5a14', '#d39a2a', '#f6dca0'] },
+    { id: 'ice',   name: 'Ice',   hex: ['#06121c', '#173a52', '#2f6f8f', '#6fb4cf', '#d6f0f7'] },
+    { id: 'rose',  name: 'Rose',  hex: ['#1a0810', '#4a1830', '#8a3358', '#d0708f', '#f6d2dc'] }
+  ];
+  const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const paletteBtn = document.getElementById('palette-btn');
+
+  // favicon: a 32px pixel-art version of the ringed planet, redrawn in whatever palette is active
+  const favLink = document.getElementById('favicon');
+  function drawFavicon() {
+    const N = 32, fc = document.createElement('canvas'); fc.width = fc.height = N;
+    const fx = fc.getContext('2d'), im = fx.createImageData(N, N), px = new Int8Array(N * N).fill(-1);
+    const cx = 16, cy = 16, R = 10.8, A = 15.4, B = 5.2, tl = -0.32, ca = Math.cos(tl), sa = Math.sin(tl);
+    const ringAt = (x, y, X, Y, front) => {
+      const dx = X - cx, dy = Y - cy, u = dx * ca + dy * sa, w = -dx * sa + dy * ca;
+      if ((w > 0) !== front) return -1;
+      const e = (u / A) ** 2 + (w / B) ** 2;
+      if (e < 0.58 || e > 1 || (e > 0.75 && e < 0.81)) return -1;
+      return clamp(dc((e < 0.75 ? 2.7 : 3.5) - (u > 0 ? 0.6 : 0), x, y), 2, 4);
+    };
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const X = x + 0.5, Y = y + 0.5;
+      let c = ringAt(x, y, X, Y, false);                       // back half of the ring
+      const nx = (X - cx) / R, ny = (Y - cy) / R, q = nx * nx + ny * ny;
+      if (q <= 1) {                                           // shaded, banded planet
+        const nz = Math.sqrt(1 - q), d = nx * LX + ny * LY + nz * LZ;
+        let v = 1 + Math.max(0, d) * 3.3;
+        if (Math.sin((ny + nx * 0.12) * 9 + 0.6) > 0.6) v -= 0.7;
+        c = clamp(dc(v, x, y), 1, 4);
+      }
+      const f = ringAt(x, y, X, Y, true);                      // front half crosses over the planet
+      if (f >= 0) c = f;
+      px[y * N + x] = c;
+    }
+    // darkest-shade outline so the icon reads on both light and dark tab bars
+    const out = px.slice();
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (px[y * N + x] >= 0) continue;
+      for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const xx = x + ox, yy = y + oy;
+        if (xx >= 0 && yy >= 0 && xx < N && yy < N && px[yy * N + xx] >= 0) { out[y * N + x] = 0; break; }
+      }
+    }
+    out.forEach((c, i) => { if (c >= 0) { const p = PAL[c]; im.data.set([p[0], p[1], p[2], 255], i * 4); } });
+    fx.putImageData(im, 0, 0);
+    favLink.href = fc.toDataURL('image/png');
+  }
+  let palIdx = Math.max(0, PALETTES.findIndex(p => p.id === store.get('palette', 'green')));
+  function applyPalette(i) {
+    const p = PALETTES[i], rs = document.documentElement.style;
+    p.hex.forEach((h, k) => { rs.setProperty('--c' + k, h); PAL[k] = hexRgb(h); });
+    rs.setProperty('--c0rgb', PAL[0].join(',')); rs.setProperty('--c1rgb', PAL[1].join(','));
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', p.hex[0]);
+    drawAvatar(avBox.classList.contains('has-photo'));
+    drawFavicon();
+    paletteBtn.title = 'Palette: ' + p.name + ' (click to change)';
+  }
+  paletteBtn.addEventListener('click', () => {
+    palIdx = (palIdx + 1) % PALETTES.length; applyPalette(palIdx); store.set('palette', PALETTES[palIdx].id);
+    sfx('palette'); achieve('palette');
+  });
+  applyPalette(palIdx);
+
+  // ---- toasts + achievements (themed as test cases) ----
+  const toasts = document.getElementById('toasts');
+  function toast(name, desc, kicker = 'ACHIEVEMENT UNLOCKED') {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = '<small></small><b></b><span></span>';
+    el.querySelector('small').textContent = kicker; el.querySelector('b').textContent = name; el.querySelector('span').textContent = desc;
+    toasts.append(el);
+    while (toasts.children.length > 3) toasts.firstElementChild.remove();
+    setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3800);
+  }
+  const ACH = [
+    ['hunt1', 'Bug Bounty', 'Found your first hidden bug.'],
+    ['hunt5', 'QA Certified', 'Found all 5 hidden bugs.'],
+    ['worm', 'Bug Squasher', 'Squashed the burrowing worm.'],
+    ['chomp', 'Edge Case', 'Poked the worm until it bit back.'],
+    ['plant', 'Root Cause', 'Sent a plant back underground.'],
+    ['storm', 'Storm Chaser', 'Started a storm on the planet.'],
+    ['ufo', 'Close Encounter', 'Stopped a UFO in its tracks.'],
+    ['firework', 'Make a Wish', 'Popped a shooting star.'],
+    ['moon', 'Moonstruck', 'Made the moon laugh.'],
+    ['star', 'Spotlight', 'Made a cross-shaped star flare.'],
+    ['astro', 'Say Cheese', 'Got the astronaut to look back.'],
+    ['regression', 'Regression Run', 'Replayed the planet rise.'],
+    ['palette', 'Visual Regression', 'Swapped the color palette.'],
+    ['sound', 'Audio Check', 'Turned the sound on.'],
+    ['diag', 'All Green', 'Ran diagnostics with zero failures.'],
+    ['ticket', 'Ticket Filed', 'Filed a bug report.'],
+    ['all', 'Full Coverage', 'Passed every other test case.']
+  ];
+  const got = new Set(store.get('ach', []).filter(id => ACH.some(a => a[0] === id)));
+  const achList = document.getElementById('ach-list'), achNum = document.getElementById('ach-num');
+  const trophyBtn = document.getElementById('trophy-btn'), trophies = document.getElementById('trophies');
+  function renderAch() {
+    achNum.textContent = got.size + '/' + ACH.length;
+    achList.textContent = '';
+    for (const [id, name, desc] of ACH) {
+      const li = document.createElement('li');
+      li.className = got.has(id) ? 'got' : '';
+      li.innerHTML = '<span class="box"></span><div><b></b><span></span></div>';
+      li.querySelector('.box').textContent = got.has(id) ? '[X]' : '[ ]';
+      li.querySelector('b').textContent = name.toUpperCase();
+      li.querySelector('div span').textContent = desc;
+      achList.append(li);
+    }
+    trophyBtn.classList.toggle('done', got.size === ACH.length);
+  }
+  function achieve(id) {
+    if (got.has(id) || !ACH.some(a => a[0] === id)) return;
+    got.add(id); store.set('ach', [...got]);
+    const [, name, desc] = ACH.find(a => a[0] === id);
+    toast(name, desc); sfx('achieve'); renderAch();
+    if (id !== 'all' && ACH.every(a => a[0] === 'all' || got.has(a[0]))) setTimeout(() => achieve('all'), 900);
+  }
+  const closeTrophies = () => { trophies.hidden = true; trophyBtn.setAttribute('aria-expanded', 'false'); };
+  trophyBtn.addEventListener('click', () => {
+    const open = trophies.hidden;
+    trophies.hidden = !open; trophyBtn.setAttribute('aria-expanded', String(open)); sfx('toggle');
+  });
+  document.addEventListener('click', e => { if (!trophies.hidden && !trophies.contains(e.target) && !trophyBtn.contains(e.target)) closeTrophies(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !trophies.hidden) { closeTrophies(); trophyBtn.focus(); } });
+  document.getElementById('ach-reset').addEventListener('click', () => {
+    store.set('ach', []); store.set('bugs', []); store.set('ticket', 0); location.reload();
+  });
+
+  // ---- Bug Hunt: 5 bugs hidden around the page ----
+  const BUGS = ['scene', 'inv', 'quest', 'train', 'footer'];
+  const found = new Set(store.get('bugs', []).filter(b => BUGS.includes(b)));
+  const bugBtn = document.getElementById('bug-count'), bugNum = document.getElementById('bug-num');
+  function renderBugs() {
+    bugNum.textContent = found.size + '/' + BUGS.length;
+    bugBtn.classList.toggle('done', found.size === BUGS.length);
+  }
+  function celebrate() {   // a little fireworks show in the sky
+    for (let i = 0; i < 6; i++) setTimeout(() => burst(W * (0.15 + Math.random() * 0.7), Hv * (0.12 + Math.random() * 0.25), clock()), i * 280);
+  }
+  function foundBug(id) {
+    if (found.has(id)) return;
+    found.add(id); store.set('bugs', [...found]); sfx('bug'); renderBugs();
+    bugBtn.classList.remove('ping'); void bugBtn.offsetWidth; bugBtn.classList.add('ping');
+    achieve('hunt1');
+    if (found.size === BUGS.length) { achieve('hunt5'); celebrate(); }
+  }
+  document.querySelectorAll('.hbug').forEach(b => {
+    if (found.has(b.dataset.bug)) { b.remove(); return; }
+    b.addEventListener('click', e => {
+      e.stopPropagation();
+      b.classList.add('found'); foundBug(b.dataset.bug);
+      setTimeout(() => b.remove(), 480);
+    });
+  });
+  bugBtn.addEventListener('click', () => {
+    const left = BUGS.length - found.size;
+    toast('BUG HUNT', left
+      ? `${left} bug${left === 1 ? ' is' : 's are'} hiding on this page. One crawls around the scene; the rest hide inside the sections.`
+      : 'All 5 bugs squashed. This page is certified bug-free.', 'HINT');
+    sfx('toggle');
+  });
+  renderBugs(); renderAch();
+
+  // ---- Run Diagnostics: real checks against this page, printed like a test run ----
+  const diag = document.getElementById('diag'), diagOut = document.getElementById('diag-out'), diagBtn = document.getElementById('diag-btn');
+  const lum = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+  const CHECKS = [
+    ['Links', () => {
+      const ext = [...document.querySelectorAll('a[target="_blank"]')];
+      const bad = ext.filter(a => !/noopener/.test(a.rel) || !a.href.startsWith('https://'));
+      return bad.length ? ['FAIL', `${bad.length} unsafe external link(s)`] : ['PASS', `${ext.length} external links use https + noopener`];
+    }],
+    ['Email', () => {
+      const m = document.querySelector('a[href^="mailto:"]');
+      return m && /^mailto:[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(m.getAttribute('href')) ? ['PASS', 'mailto link is well-formed'] : ['FAIL', 'mailto link missing or malformed'];
+    }],
+    ['Resume', async () => {
+      const a = document.querySelector('a[download]');
+      try { const r = await fetch(a.href, { method: 'HEAD', cache: 'no-store' }); return r.ok ? ['PASS', `download reachable (HTTP ${r.status})`] : ['FAIL', `download returned HTTP ${r.status}`]; }
+      catch (e) { return ['WARN', 'could not reach the download from here']; }
+    }],
+    ['Images', () => {
+      const imgs = [...document.images], bad = imgs.filter(i => !i.alt || (i.complete && !i.naturalWidth));
+      return bad.length ? ['FAIL', `${bad.length} image(s) broken or missing alt text`] : ['PASS', `${imgs.length}/${imgs.length} loaded, all with alt text`];
+    }],
+    ['Headings', () => {
+      const hs = [...document.querySelectorAll('h1,h2,h3,h4')].map(h => +h.tagName[1]);
+      let skips = 0; hs.reduce((p, c) => { if (c > p + 1) skips++; return c; }, 0);
+      const h1 = hs.filter(h => h === 1).length;
+      return h1 === 1 && !skips ? ['PASS', `1 h1, ${hs.length} headings, no skipped levels`] : ['FAIL', `${h1} h1, ${skips} skipped level(s)`];
+    }],
+    ['Buttons', () => {
+      const bs = [...document.querySelectorAll('button')], bad = bs.filter(b => !(b.getAttribute('aria-label') || b.textContent.trim() || b.title));
+      return bad.length ? ['FAIL', `${bad.length} button(s) without a name`] : ['PASS', `${bs.length}/${bs.length} buttons have accessible names`];
+    }],
+    ['Contrast', () => {
+      const body = contrast(PAL[4], PAL[0]), acc = contrast(PAL[3], PAL[0]), low = Math.min(body, acc);
+      return low >= 4.5 ? ['PASS', `text ${body.toFixed(1)}:1, accents ${acc.toFixed(1)}:1 (WCAG AA)`] : ['FAIL', `lowest ratio ${low.toFixed(1)}:1 is under 4.5:1`];
+    }],
+    ['Layout', () => document.documentElement.scrollWidth <= innerWidth ? ['PASS', `no horizontal overflow at ${innerWidth}px`] : ['FAIL', 'page overflows horizontally']],
+    ['Load time', () => {
+      const n = performance.getEntriesByType('navigation')[0], ms = n ? Math.round(n.domContentLoadedEventEnd) : null;
+      return ms == null ? ['WARN', 'timing unavailable'] : ms < 2500 ? ['PASS', `DOM ready in ${ms} ms`] : ['WARN', `DOM ready in ${ms} ms`];
+    }],
+    ['Frame rate', async () => {
+      const f0 = frames; await new Promise(r => setTimeout(r, 1000)); const fps = frames - f0;
+      return fps >= 20 ? ['PASS', `scene rendering at ~${fps} fps`] : ['WARN', `scene at ${fps} fps (tab in background?)`];
+    }],
+    ['JS errors', () => jsErrors ? ['FAIL', `${jsErrors} uncaught error(s) since load`] : ['PASS', '0 uncaught errors since load']],
+    ['Known bugs', () => {
+      const left = BUGS.length - found.size;
+      return left ? ['WARN', `${left} bug${left === 1 ? '' : 's'} still hiding on this page (see Bug Hunt)`] : ['PASS', '0 bugs at large. Nice hunting.'];
+    }]
+  ];
+  let diagRun = 0;
+  async function runDiagnostics() {
+    const run = ++diagRun;
+    diagOut.textContent = '';
+    const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+    const line = (cls, text, badge) => {
+      const d = document.createElement('div');
+      if (badge) { const s = document.createElement('span'); s.className = 'st ' + badge.toLowerCase(); s.textContent = badge; d.append(s); }
+      const t = document.createElement('span'); t.className = cls; t.textContent = text; d.append(t);
+      diagOut.append(d); diagOut.scrollTop = diagOut.scrollHeight;
+    };
+    line('dim', '$ run-diagnostics --target=this-page --reporter=retro');
+    await wait(350);
+    let pass = 0, warn = 0, fail = 0;
+    for (const [label, fn] of CHECKS) {
+      if (run !== diagRun || !diag.open) return;
+      let res;
+      try { res = await fn(); } catch (e) { res = ['FAIL', 'check crashed: ' + e.message]; }
+      if (run !== diagRun || !diag.open) return;
+      const [st, detail] = res;
+      if (st === 'PASS') pass++; else if (st === 'WARN') warn++; else fail++;
+      line('', `${(label + ' ').padEnd(12, '.')} ${detail}`, st);
+      sfx('tick');
+      await wait(200);
+    }
+    line('', ' ');
+    line('sum', `${CHECKS.length} checks: ${pass} passed, ${warn} warning${warn === 1 ? '' : 's'}, ${fail} failed`);
+    if (!fail) { line('ok', 'All green. Ship it.'); achieve('diag'); }
+  }
+  diagBtn.addEventListener('click', () => { diag.showModal(); runDiagnostics(); });
+  document.getElementById('diag-again').addEventListener('click', runDiagnostics);
+  document.getElementById('diag-close').addEventListener('click', () => diag.close());
+  diag.addEventListener('close', () => { diagRun++; diagBtn.focus(); });
+  diag.addEventListener('click', e => { if (e.target === diag) diag.close(); });   // click on the backdrop
+
+  // ---- Contact: toggle into a Jira-style "Create issue" form that drafts an email ----
+  const jira = document.getElementById('jira'), plain = document.getElementById('contact-plain');
+  const jiraOpen = document.getElementById('jira-open'), jiraSent = document.getElementById('jira-sent');
+  let ticketNo = (store.get('ticket', 0) | 0) + 1;
+  function setJira(on) {
+    jira.hidden = !on; plain.hidden = on;
+    jiraOpen.setAttribute('aria-expanded', String(on));
+    if (on) { document.getElementById('j-key').textContent = 'HIRE-' + ticketNo; jiraSent.hidden = true; document.getElementById('j-summary').focus(); }
+    sfx('toggle');
+  }
+  jiraOpen.addEventListener('click', () => setJira(true));
+  document.getElementById('jira-cancel').addEventListener('click', () => { setJira(false); jiraOpen.focus(); });
+  jira.addEventListener('submit', e => {
+    e.preventDefault();
+    const v = id => document.getElementById(id).value.trim();
+    const key = 'HIRE-' + ticketNo;
+    const subject = `[${key}] ${v('j-type')}: ${v('j-summary')}`;
+    const body = `Issue type: ${v('j-type')}\nPriority: ${v('j-pri')}\nReporter: ${v('j-reporter') || '(not given)'}\nAssignee: Scott O'Neil\nLabels: qe, hiring, portland\n\n${v('j-desc')}\n`;
+    location.href = 'mailto:jobs4scotto@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    store.set('ticket', ticketNo); ticketNo++;
+    setJira(false);
+    jiraSent.hidden = false;
+    jiraSent.textContent = `${key} created. Your mail app should open with the report ready to send.`;
+    achieve('ticket');
+  });
+})();
+</script>
+</body>
+</html>
